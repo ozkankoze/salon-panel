@@ -1,0 +1,9 @@
+{
+  "name": "salon-panel",
+  "version": "1.3.0",
+  "private": true,
+  "description": "Istanbul 10 ilce, 416 guzellik salonu WhatsApp erisim paneli + mesaj kaydi",
+  "dependencies": {
+    "pg": "^8.23.0"
+  }
+}

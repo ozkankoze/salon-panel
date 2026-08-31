@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>İstanbul Salon Erişimi</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#FBF7F6; --surface:#FFFFFF; --surface-2:#F4EEED;
+    --ink:#231B1E; --muted:#7C6B70; --faint:#A99A9E; --line:#E9DFDF;
+    --accent:#10744A; --accent-soft:#E4F0EA; --accent-ink:#0B5636;
+    --trial:#B07016; --trial-soft:#FBF0DB;
+    --sale:#1A6BB0;  --sale-soft:#E2EEF8;
+    --no:#C0392B;    --no-soft:#FBE9E7;
+    --shadow:0 1px 2px rgba(35,27,30,.05), 0 8px 24px -16px rgba(35,27,30,.28);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#15100F; --surface:#1E1817; --surface-2:#262020;
+      --ink:#F3EBEA; --muted:#A2918F; --faint:#786866; --line:#332B2A;
+      --accent:#43BE85; --accent-soft:#1B2E26; --accent-ink:#8CDCB4;
+      --trial:#DFA548; --trial-soft:#302415;
+      --sale:#5EA8E6;  --sale-soft:#16242F;
+      --no:#E8705F;    --no-soft:#301A18;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#15100F; --surface:#1E1817; --surface-2:#262020;
+    --ink:#F3EBEA; --muted:#A2918F; --faint:#786866; --line:#332B2A;
+    --accent:#43BE85; --accent-soft:#1B2E26; --accent-ink:#8CDCB4;
+    --trial:#DFA548; --trial-soft:#302415;
+    --sale:#5EA8E6;  --sale-soft:#16242F;
+    --no:#E8705F;    --no-soft:#301A18;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box}
+  html{color-scheme:light dark}
+  body{
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+    font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1020px;margin:0 auto;padding:0 20px 72px}
+
+  header{padding:44px 0 26px}
+  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 10px;font-weight:600}
+  h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(30px,4.6vw,44px);line-height:1.08;margin:0 0 10px;letter-spacing:-.015em;text-wrap:balance}
+  .lede{margin:0;color:var(--muted);max-width:62ch}
+
+  .syncline{display:flex;align-items:center;gap:8px;margin:14px 0 0;font-size:13px;color:var(--muted)}
+  .dot{width:8px;height:8px;border-radius:99px;background:var(--faint);flex:none}
+  .syncline.on .dot{background:var(--accent)}
+  .syncline.saving .dot{background:var(--trial)}
+  .syncline.off .dot{background:var(--no)}
+
+  .tally{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
+  .stat{
+    flex:1 1 132px;background:var(--surface);border:1px solid var(--line);
+    border-radius:12px;padding:12px 14px;text-align:left;font:inherit;color:inherit;
+    cursor:pointer;transition:border-color .15s ease, background .15s ease;
+  }
+  .stat:hover{border-color:var(--muted)}
+  .stat:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .stat[aria-pressed="true"]{border-color:currentColor}
+  .stat .n{font-family:Fraunces,Georgia,serif;font-size:26px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;display:block}
+  .stat .k{display:block;margin-top:6px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:600}
+  .stat.c-sent{color:var(--accent)} .stat.c-trial{color:var(--trial)}
+  .stat.c-sale{color:var(--sale)}   .stat.c-no{color:var(--no)}
+  .stat.c-todo{color:var(--muted)}
+  .stat.c-sent[aria-pressed="true"]{background:var(--accent-soft)}
+  .stat.c-trial[aria-pressed="true"]{background:var(--trial-soft)}
+  .stat.c-sale[aria-pressed="true"]{background:var(--sale-soft)}
+  .stat.c-no[aria-pressed="true"]{background:var(--no-soft)}
+  .stat.c-todo[aria-pressed="true"]{background:var(--surface-2)}
+
+  .barwrap{display:flex;align-items:center;gap:12px;margin:14px 0 0;flex-wrap:wrap}
+  .bar{flex:1 1 240px;height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden;border:1px solid var(--line);display:flex}
+  .bar i{display:block;height:100%;width:0;transition:width .3s ease}
+  .b-sale{background:var(--sale)} .b-trial{background:var(--trial)}
+  .b-sent{background:var(--accent)} .b-no{background:var(--no)}
+
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:18px;margin:26px 0 0}
+  .panel h2{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 12px;font-weight:600}
+  textarea{
+    width:100%;min-height:132px;resize:vertical;font:inherit;line-height:1.55;
+    color:var(--ink);background:var(--surface-2);border:1px solid var(--line);
+    border-radius:10px;padding:12px 14px;
+  }
+  textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .hint{margin:10px 0 0;font-size:13px;color:var(--muted)}
+  .hint code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:var(--accent-soft);color:var(--accent-ink);padding:2px 6px;border-radius:5px}
+
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:24px 0 14px;position:sticky;top:0;z-index:5;background:var(--ground);padding:12px 0}
+  input[type=search],input[type=password]{flex:1 1 220px;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:9px 12px}
+  input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .showing{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  li{
+    display:grid;grid-template-columns:26px minmax(0,1fr) auto;align-items:center;gap:14px;
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+    transition:opacity .2s ease, border-color .2s ease, background .2s ease;
+  }
+  li.s-sent{opacity:.55}
+  li.s-sent .name{text-decoration:line-through;text-decoration-color:var(--faint)}
+  li.s-no{border-color:var(--no);background:var(--no-soft)}
+  li.s-no .name{text-decoration:line-through;text-decoration-color:var(--no)}
+  li.s-trial{border-color:var(--trial);background:var(--trial-soft)}
+  li.s-sale{border-color:var(--sale);background:var(--sale-soft)}
+
+  .tick{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--line);background:var(--surface-2);cursor:pointer;padding:0;display:grid;place-items:center;color:transparent;flex:none}
+  .tick svg{width:13px;height:13px}
+  .tick.t-sent{background:var(--accent);border-color:var(--accent);color:#fff}
+  .tick.t-trial{background:var(--trial);border-color:var(--trial);color:#fff}
+  .tick.t-sale{background:var(--sale);border-color:var(--sale);color:#fff}
+  .tick.t-no{background:var(--no);border-color:var(--no);color:#fff}
+  .tick:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .name{font-weight:600;margin:0;line-height:1.3}
+  .meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin:2px 0 0;font-size:13px;color:var(--muted)}
+  .meta b{font-weight:500;color:var(--ink)}
+  .tel{font-variant-numeric:tabular-nums}
+  .ilce{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+  .flag{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:99px;color:#fff}
+  .flag.f-trial{background:var(--trial)} .flag.f-sale{background:var(--sale)} .flag.f-no{background:var(--no)}
+
+  .acts{display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end}
+  .btn{
+    font:inherit;font-size:13px;font-weight:600;border-radius:9px;padding:8px 12px;cursor:pointer;
+    border:1px solid var(--line);background:var(--surface-2);color:var(--ink);
+    text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  }
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.mark{background:transparent;color:var(--muted);font-weight:500}
+  .btn.m-no[aria-pressed="true"]{background:var(--no);border-color:var(--no);color:#fff}
+  .btn.m-trial[aria-pressed="true"]{background:var(--trial);border-color:var(--trial);color:#fff}
+  .btn.m-sale[aria-pressed="true"]{background:var(--sale);border-color:var(--sale);color:#fff}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .btn:hover{filter:brightness(1.06)}
+
+  .empty{text-align:center;color:var(--muted);padding:44px 0;border:1px dashed var(--line);border-radius:12px}
+  footer{margin:34px 0 0;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+  footer p{margin:0 0 6px}
+
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(14px);
+    background:var(--ink);color:var(--ground);padding:9px 16px;border-radius:99px;
+    font-size:13px;font-weight:500;opacity:0;pointer-events:none;
+    transition:opacity .18s ease, transform .18s ease;z-index:20;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* giriş ekranı */
+  #gate{position:fixed;inset:0;background:var(--ground);display:grid;place-items:center;z-index:30;padding:20px}
+  #gate[hidden]{display:none}
+  #gate .box{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:var(--shadow)}
+  #gate h2{font-family:Fraunces,Georgia,serif;font-size:22px;margin:0 0 6px;font-weight:600}
+  #gate p{margin:0 0 16px;color:var(--muted);font-size:13px}
+  #gate form{display:flex;gap:8px}
+  #gate .err{color:var(--no);font-size:13px;margin:10px 0 0;min-height:1em}
+
+  /* sekmeler */
+  .tabs{display:flex;gap:4px;margin:26px 0 0;border-bottom:1px solid var(--line)}
+  .tab{
+    font:inherit;font-size:14px;font-weight:600;color:var(--muted);background:none;
+    border:0;border-bottom:2px solid transparent;padding:11px 14px;cursor:pointer;margin-bottom:-1px;
+  }
+  .tab:hover{color:var(--ink)}
+  .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+  .tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  #view-salons[hidden],#view-log[hidden]{display:none}
+
+  /* mesaj kaydı */
+  .cards{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
+  .card{flex:1 1 132px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .card .n{font-family:Fraunces,Georgia,serif;font-size:26px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;display:block}
+  .card .k{display:block;margin-top:6px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:600}
+  .card.c-accent{color:var(--accent)}
+
+  .logform{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+  .fld{display:flex;flex-direction:column;gap:6px;flex:1 1 160px;min-width:0}
+  .fld span{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:600}
+  .fld input{
+    font:inherit;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);
+    border-radius:9px;padding:9px 12px;width:100%;box-sizing:border-box;
+  }
+  .fld input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .fld.narrow{flex:0 1 140px}
+  .logform .btn{padding:10px 18px}
+
+  .tblwrap{overflow-x:auto;padding:4px 0 0}
+  table.log{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  table.log th{
+    text-align:left;font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--faint);font-weight:600;padding:0 10px 10px;border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  table.log td{padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  table.log tbody tr:last-child td{border-bottom:0}
+  table.log th.num,table.log td.num{text-align:right}
+  table.log td.day{color:var(--muted)}
+  input.cnt{
+    width:84px;font:inherit;font-weight:600;text-align:right;color:var(--ink);
+    background:transparent;border:1px solid transparent;border-radius:7px;padding:5px 8px;
+  }
+  input.cnt:hover{border-color:var(--line);background:var(--surface-2)}
+  input.cnt:focus-visible{outline:2px solid var(--accent);outline-offset:0;background:var(--surface-2)}
+  .del{background:none;border:0;font:inherit;font-size:13px;color:var(--faint);cursor:pointer;padding:5px 9px;border-radius:7px}
+  .del:hover{color:var(--no);background:var(--no-soft)}
+  .del:focus-visible{outline:2px solid var(--no);outline-offset:1px}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+  @media (max-width:760px){
+    li{grid-template-columns:26px minmax(0,1fr);row-gap:10px}
+    .acts{grid-column:1/-1;justify-content:flex-start}
+    .fld{flex:1 1 100%}
+    .fld.narrow{flex:1 1 100%}
+    .logform .btn{width:100%;justify-content:center}
+    .controls input[type=search]{flex:1 1 100%}
+  }
+  @media (max-width:560px){
+    /* dar ekranda "Gün" sütunu düşer, tablo yatay kaymadan sığar */
+    table.log th:nth-child(3),table.log td:nth-child(3){display:none}
+    table.log th,table.log td{padding-left:6px;padding-right:6px}
+    input.cnt{width:64px}
+    .tab{padding:11px 10px}
+  }
+</style>
+</head>
+<body>
+
+<div id="gate" hidden>
+  <div class="box">
+    <h2>Salon Paneli</h2>
+    <p>Devam etmek için ekip parolasını gir.</p>
+    <form id="gateform">
+      <input type="password" id="pw" placeholder="Parola" autocomplete="current-password" required>
+      <button class="btn primary" type="submit">Gir</button>
+    </form>
+    <p class="err" id="gateerr"></p>
+  </div>
+</div>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">İstanbul · güzellik salonları</p>
+    <h1>İstanbul Salon Erişimi</h1>
+    <p class="lede">Instagram'da aktif 416 güzellik salonu — Ataşehir 75, Ümraniye 58, Esenyurt 66, Küçükçekmece 25, Pendik 30, Bağcılar 30, Bahçelievler 10, Başakşehir 15, Sultangazi 13, Maltepe 94. Mesajı düzenle, satırdaki butona bas — WhatsApp o kişinin sohbetinde mesaj hazır açılır. Sonucu <b>Deneme</b>, <b>Satın alım</b> ya da <b>WhatsApp yok</b> olarak işaretle. <b>Mesaj Kaydı</b> sekmesinde hangi numaradan hangi gün kaç mesaj attığını tutabilirsin.</p>
+
+    <p class="syncline" id="syncline"><span class="dot"></span><span id="syncmsg">Bağlanıyor…</span></p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Panel sekmeleri">
+    <button class="tab" type="button" role="tab" data-v="salons" aria-selected="true" aria-controls="view-salons">Salonlar</button>
+    <button class="tab" type="button" role="tab" data-v="log" aria-selected="false" aria-controls="view-log">Mesaj Kaydı</button>
+  </div>
+
+  <div id="view-salons" role="tabpanel">
+    <div class="tally" role="group" aria-label="Durum filtreleri">
+      <button type="button" class="stat c-todo"  data-f="todo"  aria-pressed="false"><span class="n" data-c="todo">0</span><span class="k">Bekleyen</span></button>
+      <button type="button" class="stat c-sent"  data-f="sent"  aria-pressed="false"><span class="n" data-c="sent">0</span><span class="k">Gönderildi</span></button>
+      <button type="button" class="stat c-trial" data-f="trial" aria-pressed="false"><span class="n" data-c="trial">0</span><span class="k">Denemeye geçti</span></button>
+      <button type="button" class="stat c-sale"  data-f="sale"  aria-pressed="false"><span class="n" data-c="sale">0</span><span class="k">Satın alım</span></button>
+      <button type="button" class="stat c-no"    data-f="no"    aria-pressed="false"><span class="n" data-c="no">0</span><span class="k">WhatsApp yok</span></button>
+    </div>
+    <div class="barwrap">
+      <div class="bar">
+        <i class="b-sale" id="bar-sale"></i><i class="b-trial" id="bar-trial"></i><i class="b-sent" id="bar-sent"></i><i class="b-no" id="bar-no"></i>
+      </div>
+      <button class="btn mark" id="showall" type="button">Tümünü göster</button>
+      <button class="btn mark" id="reset" type="button">Sıfırla</button>
+    </div>
+
+    <section class="panel">
+    <h2>Mesaj şablonu</h2>
+    <textarea id="tpl" spellcheck="false"></textarea>
+    <p class="hint"><code>{kullanici}</code> her satırda o salonun Instagram kullanıcı adıyla değişir. Kutunun dışına tıklayınca herkes için kaydedilir.</p>
+  </section>
+
+  <div class="controls">
+    <input type="search" id="q" placeholder="Salon, kullanıcı adı veya ilçe ara" aria-label="Ara">
+    <span class="showing" id="showing"></span>
+  </div>
+
+    <ul id="list"></ul>
+    <div class="empty" id="empty" hidden>Bu filtreye uyan salon yok.</div>
+  </div>
+
+  <div id="view-log" role="tabpanel" hidden>
+    <div class="cards">
+      <div class="card c-accent"><span class="n" id="lg-today">0</span><span class="k">Bugün gönderilen</span></div>
+      <div class="card"><span class="n" id="lg-week">0</span><span class="k">Son 7 gün</span></div>
+      <div class="card"><span class="n" id="lg-total">0</span><span class="k">Toplam mesaj</span></div>
+      <div class="card"><span class="n" id="lg-nums">0</span><span class="k">Kullanılan numara</span></div>
+    </div>
+
+    <section class="panel">
+      <h2>Kayıt ekle</h2>
+      <form class="logform" id="logform" autocomplete="off">
+        <label class="fld"><span>Tel No</span>
+          <input id="lg-tel" list="lg-tels" inputmode="tel" placeholder="0501 589 46 11" required>
+          <datalist id="lg-tels"></datalist>
+        </label>
+        <label class="fld narrow"><span>Tarih</span>
+          <input id="lg-date" type="date" required>
+        </label>
+        <label class="fld narrow"><span>Mesaj Sayısı</span>
+          <input id="lg-count" type="number" min="1" max="100000" step="1" placeholder="25" required>
+        </label>
+        <button class="btn primary" type="submit">Ekle</button>
+      </form>
+      <p class="hint">Aynı numara ve aynı gün için tekrar giriş yaparsan sayı mevcut kaydın <b>üstüne eklenir</b>. Tablodaki sayıya tıklayıp doğrudan düzeltebilirsin.</p>
+    </section>
+
+    <div class="controls">
+      <input type="search" id="lgq" placeholder="Numara veya tarih ara" aria-label="Kayıtlarda ara">
+      <span class="showing" id="lgshowing"></span>
+    </div>
+
+    <section class="panel tblwrap" id="lgtable">
+      <table class="log">
+        <thead>
+          <tr><th>Tel No</th><th>Tarih</th><th>Gün</th><th class="num">Mesaj Sayısı</th><th></th></tr>
+        </thead>
+        <tbody id="lgbody"></tbody>
+      </table>
+    </section>
+    <div class="empty" id="lgempty" hidden>Henüz kayıt yok — yukarıdaki kutudan ilk kaydını ekle.</div>
+  </div>
+
+  <footer>
+    <p>Her mesajı WhatsApp'ta sen gönderiyorsun; bu sayfa yalnızca sohbeti metin hazır şekilde açar.</p>
+    <p>İşaretler ve mesaj kayıtları ortak veritabanında tutulur — linke giren herkes aynı durumu görür, değişiklikler 10 saniyede bir yenilenir.</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var SALONS = [{"name": "Refika Güzellik Merkezi", "user": "refikaguzellik", "tel": "5321658889", "ilce": "Ataşehir"}, {"name": "Zeynep Gökalp Atelier", "user": "zeynepgatelier", "tel": "5448170434", "ilce": "Ataşehir"}, {"name": "Sevgi Akın Güzellik Merkezi", "user": "sevgiakinbeautycenter", "tel": "5310322887", "ilce": "Ataşehir"}, {"name": "Kübra Turgut Ataşehir", "user": "kubraturgutofficial", "tel": "5334617221", "ilce": "Ataşehir"}, {"name": "Gözde Gizem Beauty", "user": "gozdegizembeauty", "tel": "8503770434", "ilce": "Ataşehir"}, {"name": "Metropol Makeup Studio", "user": "metropolmakeupstudio", "tel": "5303465170", "ilce": "Ataşehir"}, {"name": "NaiLyuba Ataşehir", "user": "nailyuba", "tel": "5323995688", "ilce": "Ataşehir"}, {"name": "Tırnak Butik Ataşehir", "user": "tirnakbutik", "tel": "5386933222", "ilce": "Ataşehir"}, {"name": "Sansai Spa", "user": "sansaispa", "tel": "5512141414", "ilce": "Ataşehir"}, {"name": "M'Oje Beauty", "user": "mojebeautylounge", "tel": "5526636653", "ilce": "Ataşehir"}, {"name": "Maduu Beauty Ataşehir", "user": "maduubeauty", "tel": "5337618898", "ilce": "Ataşehir"}, {"name": "EsteZen Güzellik İçerenköy", "user": "este.zen", "tel": "5300667627", "ilce": "Ataşehir"}, {"name": "Crown Beauty Ataşehir", "user": "crownbeautyist", "tel": "5300540385", "ilce": "Ataşehir"}, {"name": "Seldie Beauty & Wellness", "user": "seldie_beauty_wellness", "tel": "2166883843", "ilce": "Ataşehir"}, {"name": "Bonita Black Ataşehir", "user": "bonitablackatasehir", "tel": "5445542815", "ilce": "Ataşehir"}, {"name": "Larni Beauty", "user": "larnibeauty_", "tel": "5457660928", "ilce": "Ataşehir"}, {"name": "Emre Ayaksız Ataşehir", "user": "emreayaksiz", "tel": "5321112124", "ilce": "Ataşehir"}, {"name": "Birsel Taşkıran Kuaför", "user": "birseltaskiran", "tel": "2165728323", "ilce": "Ataşehir"}, {"name": "Selin Beauty Center Ataşehir", "user": "selinbeautycenteratasehir", "tel": "5494693434", "ilce": "Ataşehir"}, {"name": "Liyan Estetik & Güzellik", "user": "liyanestetikveguzellik", "tel": "5312381691", "ilce": "Ataşehir"}, {"name": "Olla Hair & Beauty", "user": "ollaatasehir", "tel": "5431950505", "ilce": "Ataşehir"}, {"name": "Miss Güzellik Salonu", "user": "miss.guzelliksalonu", "tel": "5412225588", "ilce": "Ataşehir"}, {"name": "Odysseia Güzellik", "user": "odysseiaguzellik", "tel": "2169095034", "ilce": "Ataşehir"}, {"name": "Eylül Öztürk Nail Spa", "user": "eylulozturkatasehir", "tel": "5439569875", "ilce": "Ataşehir"}, {"name": "İzGe Güzellik & Epilasyon", "user": "izge_guzellik", "tel": "5437971274", "ilce": "Ataşehir"}, {"name": "Lujoo Beauty Ataşehir", "user": "lujoobeauty", "tel": "5059145856", "ilce": "Ataşehir"}, {"name": "Avangard Estetik", "user": "avangardestetik", "tel": "2169080708", "ilce": "Ataşehir"}, {"name": "Kübra Coşar Beauty", "user": "kubracosarbeautyatasehir", "tel": "5010436694", "ilce": "Ataşehir"}, {"name": "Latife Beauty", "user": "latifebeauty", "tel": "5363500136", "ilce": "Ataşehir"}, {"name": "Holly Beauty Ataşehir", "user": "hollybeautyatasehir", "tel": "5442285859", "ilce": "Ataşehir"}, {"name": "Pelin Tatlı Art Beauty", "user": "atasehirpelintatliartbeauty", "tel": "5531920191", "ilce": "Ataşehir"}, {"name": "Lilith Nail Lounge Ataşehir", "user": "lilithnaillounge", "tel": "5306603371", "ilce": "Ataşehir"}, {"name": "Microblading Ataşehir", "user": "microblading_atasehir", "tel": "5316800505", "ilce": "Ataşehir"}, {"name": "Sultan Şimşek Beauty", "user": "sultansimsekbeauty", "tel": "5343005670", "ilce": "Ataşehir"}, {"name": "Yako Health & Beauty", "user": "yakohealthandbeauty", "tel": "5340851006", "ilce": "Ataşehir"}, {"name": "Şeyda Uygur Feel Fit Beauty", "user": "seydauygurbeauty", "tel": "2169990976", "ilce": "Ataşehir"}, {"name": "The Ritual of Beauty Ataşehir", "user": "theritualofbeauty", "tel": "5336025238", "ilce": "Ataşehir"}, {"name": "Sevim Alan Güzellik Merkezi", "user": "sevimalanatasehirtower", "tel": "5321549018", "ilce": "Ataşehir"}, {"name": "Palmira Güzellik Salonu", "user": "palmiraguzelliksalonu", "tel": "2164556365", "ilce": "Ataşehir"}, {"name": "AS Beauty Ataşehir", "user": "asguzellik_atasehir", "tel": "5308943732", "ilce": "Ataşehir"}, {"name": "Ataşehir Nail Beauty", "user": "atasehirnails", "tel": "5347990666", "ilce": "Ataşehir"}, {"name": "Pekin Güzellik Salonu", "user": "pekinguzelliksalonu", "tel": "5304012096", "ilce": "Ataşehir"}, {"name": "Çiğdem Köroğlu Beauty", "user": "cigdemkoroglubeauty", "tel": "5300159497", "ilce": "Ataşehir"}, {"name": "Ses Beauty Metropol", "user": "sesbeautycom", "tel": "5453329833", "ilce": "Ataşehir"}, {"name": "Ataşehir Arin Güzellik Salonu", "user": "arin_guzellik", "tel": "5415686781", "ilce": "Ataşehir"}, {"name": "Maison Eros Ataşehir", "user": "maisonerus", "tel": "5016243767", "ilce": "Ataşehir"}, {"name": "Beauty Boss Ataşehir", "user": "beautybossatasehir", "tel": "2164691399", "ilce": "Ataşehir"}, {"name": "Sevgi Önül Güzellik & Estetik", "user": "sevgionulguzellik", "tel": "5304511040", "ilce": "Ataşehir"}, {"name": "Delfi Beauty Ataşehir", "user": "delfi_beautyskin", "tel": "5324592619", "ilce": "Ataşehir"}, {"name": "Ayşe Nur Açıkgöz The Beauty Studio", "user": "aysenuracikgoz_beautystudio", "tel": "5457450793", "ilce": "Ataşehir"}, {"name": "Ayşe Uzunlar Beauty Studio", "user": "phibrows_ayseuzunlar", "tel": "5304141845", "ilce": "Ataşehir"}, {"name": "Yeliz Duran Saloon", "user": "yelizduran.salon", "tel": "5340566291", "ilce": "Ataşehir"}, {"name": "Sance Nail & Beauty", "user": "sancenail", "tel": "5412492959", "ilce": "Ataşehir"}, {"name": "Biz Protez Tırnak Ataşehir", "user": "proteztirnakatasehir", "tel": "2164697549", "ilce": "Ataşehir"}, {"name": "Carla Beauty Clinic", "user": "carlaestetik", "tel": "5424753392", "ilce": "Ataşehir"}, {"name": "Ebru Şavak Beauty", "user": "ebru_savak_beauty", "tel": "5528809009", "ilce": "Ataşehir"}, {"name": "Nagihan Yastı Beauty", "user": "nagihanyastibeauty", "tel": "5461611734", "ilce": "Ataşehir"}, {"name": "Eda Erbaş Beauty Clinic", "user": "edaerbasestetik", "tel": "5354661940", "ilce": "Ataşehir"}, {"name": "Dr. Ektan Demir Estetik", "user": "dr.ektandemir", "tel": "5325725444", "ilce": "Ataşehir"}, {"name": "Ataşehir Dilan Polat Polikliniği", "user": "atasehirdilanpolatpoliklinigi", "tel": "8503085450", "ilce": "Ataşehir"}, {"name": "Perla Nail Beauty Ataşehir", "user": "perlanailbeauty", "tel": "5327967070", "ilce": "Ataşehir"}, {"name": "Özge Taşkın Güzellik Merkezi", "user": "ozgetaskinguzellik", "tel": "5461611734", "ilce": "Ataşehir"}, {"name": "Shine Kuaför", "user": "shinekuafor", "tel": "5425771943", "ilce": "Ataşehir"}, {"name": "San Kuaför Ataşehir", "user": "sankuaforatasehir", "tel": "5423691736", "ilce": "Ataşehir"}, {"name": "Azza Kuaför", "user": "azzakuafor", "tel": "2164690230", "ilce": "Ataşehir"}, {"name": "Kent Kuaför Ataşehir", "user": "kentkuaforatasehir", "tel": "5309750074", "ilce": "Ataşehir"}, {"name": "Mrs London Ataşehir", "user": "mrslondonatasehir", "tel": "2164568227", "ilce": "Ataşehir"}, {"name": "Murat Taşpınar Saç ve Güzellik", "user": "murattaspinar_hair", "tel": "5443323478", "ilce": "Ataşehir"}, {"name": "Mira Estetik", "user": "miraestetik", "tel": "5419073836", "ilce": "Ataşehir"}, {"name": "Medusa Nail & Beauty Ataşehir", "user": "medusanailbeauty", "tel": "5419417705", "ilce": "Ataşehir"}, {"name": "My Juju Beauty Salon", "user": "myjujubeautysalon", "tel": "5343683933", "ilce": "Ataşehir"}, {"name": "Miss Bay Salon Ataşehir", "user": "missbaysalon", "tel": "2164552255", "ilce": "Ataşehir"}, {"name": "Ataşehir Kirpik Tırnak Merkezi", "user": "atasehirkirpik", "tel": "5377339977", "ilce": "Ataşehir"}, {"name": "Suu Estetik Ataşehir", "user": "suuestetik", "tel": "2164566658", "ilce": "Ataşehir"}, {"name": "Salon Miss Ataşehir", "user": "salonmiss", "tel": "2164569151", "ilce": "Ataşehir"}, {"name": "Lola Nail Station Ümraniye", "user": "lolanail_station", "tel": "5332813443", "ilce": "Ümraniye"}, {"name": "Nefes Estetik", "user": "nefesestetik", "tel": "2164430633", "ilce": "Ümraniye"}, {"name": "Hüseyin Hair Studio", "user": "huseyin.hair.studio", "tel": "2165202506", "ilce": "Ümraniye"}, {"name": "Zarif Güzellik Altınşehir", "user": "zarifguzellik_altinsehir", "tel": "2165082084", "ilce": "Ümraniye"}, {"name": "Ümraniye İpek Kirpik & Protez Tırnak", "user": "ipekkirpikproteztirnakmerkezi", "tel": "5446506396", "ilce": "Ümraniye"}, {"name": "Derfamed Estetik & Güzellik", "user": "derfamed", "tel": "5332001202", "ilce": "Ümraniye"}, {"name": "Caren Güzellik Salonu", "user": "guzellikcaren", "tel": "5385156458", "ilce": "Ümraniye"}, {"name": "Sıla Özben Güzellik Salonu", "user": "silaozbenguzelliksalon", "tel": "5386627102", "ilce": "Ümraniye"}, {"name": "Este Rita Beauty Center", "user": "esterita.tr", "tel": "5331573097", "ilce": "Ümraniye"}, {"name": "Queenzz Estetik Ümraniye Merkez", "user": "queenzzguzellikumraniyemerkez", "tel": "5333095074", "ilce": "Ümraniye"}, {"name": "Ebru Öztel Kuaför", "user": "ebruoztelkuafor", "tel": "5424613278", "ilce": "Ümraniye"}, {"name": "Seher Tunalı Güzellik Salonu", "user": "seher_tunali", "tel": "5539473084", "ilce": "Ümraniye"}, {"name": "Leman Demir Güzellik Salonu", "user": "lemandemirguzellik", "tel": "5436450015", "ilce": "Ümraniye"}, {"name": "Damla Akgün Beauty", "user": "damlaakgunbeauty", "tel": "5412820810", "ilce": "Ümraniye"}, {"name": "Ovê Beauty Nail Studio Ümraniye", "user": "ovebeauty.umraniye", "tel": "5437152888", "ilce": "Ümraniye"}, {"name": "By Magic Touch Güzellik Merkezi", "user": "by.magictouch", "tel": "5522463732", "ilce": "Ümraniye"}, {"name": "Gülay Çelik Güzellik Salonu", "user": "gulaycelikguzelliksalonu", "tel": "5342226739", "ilce": "Ümraniye"}, {"name": "Sibel Kırbaş Ümraniye", "user": "sibelkirbasbeauty", "tel": "8502424561", "ilce": "Ümraniye"}, {"name": "Queenzz Estetik Ümraniye Çarşı", "user": "queenzzguzellikumraniyecarsi", "tel": "5330585074", "ilce": "Ümraniye"}, {"name": "Estelaboure Güzellik Merkezi", "user": "estelaboure", "tel": "5523194399", "ilce": "Ümraniye"}, {"name": "Nurkan Ak Güzellik Salonu", "user": "nurkanakofficial", "tel": "5327622319", "ilce": "Ümraniye"}, {"name": "Asia Ümraniye Güzellik & Bakım", "user": "asiaumraniye", "tel": "5300725654", "ilce": "Ümraniye"}, {"name": "Arya Bektaş Ümraniye", "user": "aryabektasumraniye", "tel": "5446390918", "ilce": "Ümraniye"}, {"name": "Dies Ümraniye Beauty & Coiffeur", "user": "dies.umraniye", "tel": "5401665353", "ilce": "Ümraniye"}, {"name": "Tuğba Karakuş Güzellik", "user": "tugbakarakusguzellk", "tel": "5393090190", "ilce": "Ümraniye"}, {"name": "ivvi Professional Beauty", "user": "ivvi_professional", "tel": "5330758717", "ilce": "Ümraniye"}, {"name": "Asestetik Ümraniye Lazer Epilasyon", "user": "asestetik", "tel": "8505320099", "ilce": "Ümraniye"}, {"name": "Özge Özbek Güzellik", "user": "ozgeozbekguzellik", "tel": "5527942787", "ilce": "Ümraniye"}, {"name": "Nirvana Güzellik Merkezi", "user": "nirvanaestetikistanbul", "tel": "2167713440", "ilce": "Ümraniye"}, {"name": "Gönül Bektaş Beauty & Nail Art", "user": "gonulbeautynail", "tel": "5326856236", "ilce": "Ümraniye"}, {"name": "Sua Beauty", "user": "suabeauty.tr", "tel": "5324766370", "ilce": "Ümraniye"}, {"name": "Mehmet Tatlı Ümraniye", "user": "mehmettatliumraniye", "tel": "2165251225", "ilce": "Ümraniye"}, {"name": "Cansu Güzellik & Beauty", "user": "cansubeauty.guzellik", "tel": "5059169393", "ilce": "Ümraniye"}, {"name": "Liva Kuaför & Güzellik Salonu", "user": "livaguzellikistanbul", "tel": "2165330004", "ilce": "Ümraniye"}, {"name": "Bilge Turan Güzellik Salonu", "user": "salonbilgeturan", "tel": "5323495361", "ilce": "Ümraniye"}, {"name": "Esmeda Beauty", "user": "esmedabeauty", "tel": "5458893419", "ilce": "Ümraniye"}, {"name": "Enza Güzellik Merkezi Ümraniye", "user": "enzaumraniye", "tel": "5011133401", "ilce": "Ümraniye"}, {"name": "Sema Kukul Güzellik Salonu", "user": "semakukulguzellik", "tel": "2164433453", "ilce": "Ümraniye"}, {"name": "Kezban Polatcan Güzellik Merkezi", "user": "kezbanpolatcan_guzelliksalonu", "tel": "5059041667", "ilce": "Ümraniye"}, {"name": "Sonay Ümraniye Güzellik Merkezi", "user": "sonayguzellikmerkezi", "tel": "5349710229", "ilce": "Ümraniye"}, {"name": "Moon Beauty Güzellik & Protez Tırnak", "user": "moonguzelliksalonu", "tel": "5533030323", "ilce": "Ümraniye"}, {"name": "Beauty Boss Şerifali", "user": "beautybosstr", "tel": "5068457065", "ilce": "Ümraniye"}, {"name": "Esteticteam Güzellik Merkezi", "user": "esteticteam", "tel": "2165201019", "ilce": "Ümraniye"}, {"name": "His Beauty Ümraniye", "user": "hisbeautyumraniye", "tel": "8503083633", "ilce": "Ümraniye"}, {"name": "Güneşim Güzellik Salonu", "user": "gunesimguzellik", "tel": "2165948969", "ilce": "Ümraniye"}, {"name": "Celine Beauty Lab", "user": "celine.beautylab", "tel": "5418068358", "ilce": "Ümraniye"}, {"name": "Rose Candy Güzellik Merkezi Ümraniye", "user": "rosecandycosmetics", "tel": "5302853832", "ilce": "Ümraniye"}, {"name": "İona Güzellik Salonu", "user": "ionaabeauty", "tel": "5411894258", "ilce": "Ümraniye"}, {"name": "Sena Özkan Beauty", "user": "senaozkanbeauty", "tel": "5431559553", "ilce": "Ümraniye"}, {"name": "Fulya Güzellik Salonu", "user": "fulyaguzelliksalonu", "tel": "5079199288", "ilce": "Ümraniye"}, {"name": "Altın Oran Kaş Tasarım Merkezi", "user": "yelizkarakusguzellik", "tel": "5333575192", "ilce": "Ümraniye"}, {"name": "Emine Kızılağıl Beauty Studio", "user": "emine_kizilagil_beauty", "tel": "5304972358", "ilce": "Ümraniye"}, {"name": "Esma Özer Beauty", "user": "esmaozerbeauty", "tel": "5551875089", "ilce": "Ümraniye"}, {"name": "Nalin Gülten Beauty Bar", "user": "ng.beautybar", "tel": "5323945036", "ilce": "Ümraniye"}, {"name": "Berlin Kuaför", "user": "berlinkuaforr", "tel": "2169096335", "ilce": "Ümraniye"}, {"name": "Dilek Şahin Beauty Turkey", "user": "dileksahinbeautyturkey", "tel": "2165145800", "ilce": "Ümraniye"}, {"name": "Perla Rossa İstanbul", "user": "perlarossaistanbul", "tel": "5459121384", "ilce": "Ümraniye"}, {"name": "White Beauty Ümraniye", "user": "whitebeautyumraniye", "tel": "5061684797", "ilce": "Ümraniye"}, {"name": "Mina Güzellik Merkezi Esenyurt", "user": "minaguzellikmerkezi", "tel": "5418253959", "ilce": "Esenyurt"}, {"name": "Mustafa Akkoyun Kuaför & Güzellik", "user": "mustafaakkoyunn", "tel": "2128537172", "ilce": "Esenyurt"}, {"name": "Mehtap Akdağ Güzellik Salonu", "user": "mehtapakdagguzellik", "tel": "5327065570", "ilce": "Esenyurt"}, {"name": "Bir Ömür Güzellik Salonu", "user": "biromurguzelliksalonu", "tel": "5313704715", "ilce": "Esenyurt"}, {"name": "Salon Mavera Lazer & Güzellik", "user": "salonmavera_", "tel": "5326846093", "ilce": "Esenyurt"}, {"name": "Becca Güzellik Lotus Esenyurt", "user": "beccaguzellik", "tel": "5530505523", "ilce": "Esenyurt"}, {"name": "Ceren Çakır Güzellik Salonu", "user": "cerencakirguzellik", "tel": "5441423434", "ilce": "Esenyurt"}, {"name": "Nova Güzellik Salonu Esenyurt", "user": "novaguzellikesenyurt", "tel": "5553716892", "ilce": "Esenyurt"}, {"name": "BKM Güzellik Salonu", "user": "bkmguzelliksalonu", "tel": "5452526643", "ilce": "Esenyurt"}, {"name": "Glow Touch Beauty", "user": "glowtouchbeauty", "tel": "5437389725", "ilce": "Esenyurt"}, {"name": "Hafize Topal Güzellik Salonu", "user": "hafizetopalguzellik", "tel": "5326411920", "ilce": "Esenyurt"}, {"name": "Ebru Ergün Güzellik Merkezi", "user": "ebruergunguzellikmerkezi", "tel": "5456172579", "ilce": "Esenyurt"}, {"name": "Fulya Şah Güzellik Merkezi", "user": "fulyasahguzellik", "tel": "5333973280", "ilce": "Esenyurt"}, {"name": "Selma Zengin Güzellik Salonu", "user": "selmazenginguzelliksalonu", "tel": "5424550871", "ilce": "Esenyurt"}, {"name": "Ges Güzellik Epilasyon Esenyurt", "user": "gesguzellikesenyurt", "tel": "5422464437", "ilce": "Esenyurt"}, {"name": "Neu Güzellik Merkezi Esenyurt", "user": "neuguzellikesenyurtt", "tel": "5335606934", "ilce": "Esenyurt"}, {"name": "Queen Nail Studyo Esenyurt", "user": "queen_nailstudyo", "tel": "5073952822", "ilce": "Esenyurt"}, {"name": "Nur'la Güzellik (Nuray Kaya)", "user": "nurla_guzellik", "tel": "5336320072", "ilce": "Esenyurt"}, {"name": "Melek Nas Güzellik Merkezi", "user": "meleknasguzellik", "tel": "5332097353", "ilce": "Esenyurt"}, {"name": "Aler Beauty Esenyurt", "user": "alerbeauty_", "tel": "5321797562", "ilce": "Esenyurt"}, {"name": "Beautyland by Güneş", "user": "beautyland_bygunes", "tel": "5379181676", "ilce": "Esenyurt"}, {"name": "Liyana Kuaför ve Güzellik", "user": "liyanakuafor", "tel": "5449330023", "ilce": "Esenyurt"}, {"name": "Özge Aktaş Beauty", "user": "ozgeaktasbeauty", "tel": "5306848146", "ilce": "Esenyurt"}, {"name": "Şeri Life Beauty Center Esenyurt", "user": "serilifebeauty", "tel": "5056883788", "ilce": "Esenyurt"}, {"name": "Vivi Güzellik", "user": "viviguzellik", "tel": "2127412431", "ilce": "Esenyurt"}, {"name": "Gizem Deniz Beauty", "user": "gizemdenizbeauty", "tel": "5324353305", "ilce": "Esenyurt"}, {"name": "Podonur Güzellik & Bakım Esenyurt", "user": "podonur", "tel": "5526412107", "ilce": "Esenyurt"}, {"name": "Çiğdem Koç Güzellik Salonu", "user": "cigdemkocguzellik", "tel": "5322377590", "ilce": "Esenyurt"}, {"name": "Sibel Kalkan Beauty Kaş Tasarım", "user": "sibelkalkanbeauty", "tel": "5541335110", "ilce": "Esenyurt"}, {"name": "Clove Beauty Center", "user": "clovebeautycenter", "tel": "5411584365", "ilce": "Esenyurt"}, {"name": "Maskara Luxury Salon", "user": "maskaraluxurysalon", "tel": "5359625555", "ilce": "Esenyurt"}, {"name": "Clean Women Beauty", "user": "cleanwomenbeauty", "tel": "5549522368", "ilce": "Esenyurt"}, {"name": "Estila Güzellik Merkezi", "user": "estilaguzellik", "tel": "5071865608", "ilce": "Esenyurt"}, {"name": "Massari Esthetic Güzellik Salonu", "user": "massariesthetic", "tel": "5300822747", "ilce": "Esenyurt"}, {"name": "Beyaz İnci Güzellik Merkezi", "user": "beyazinciguzellikesenyurt", "tel": "5457212663", "ilce": "Esenyurt"}, {"name": "SheMedworld Güzellik Merkezi", "user": "shemedworld", "tel": "2126894084", "ilce": "Esenyurt"}, {"name": "Dilek Şendur Güzellik Stüdyosu", "user": "dileksendurguzellik", "tel": "5306267509", "ilce": "Esenyurt"}, {"name": "Relax Güzellik Merkezi Esenyurt", "user": "relaxguzellikmerkezi", "tel": "5057539312", "ilce": "Esenyurt"}, {"name": "Derya Öral Güzellik Merkezi", "user": "deryaoralguzellik", "tel": "5314367381", "ilce": "Esenyurt"}, {"name": "Sema Bican Güzellik Merkezi", "user": "semabicanguzellik", "tel": "5056618128", "ilce": "Esenyurt"}, {"name": "Bita Nail Art", "user": "bitanailart", "tel": "5494450684", "ilce": "Esenyurt"}, {"name": "Estelina Güzellik Esenyurt", "user": "estelinaguzellikesenyurt", "tel": "5529470651", "ilce": "Esenyurt"}, {"name": "Hazal Sarıtaç Beauty Esenyurt", "user": "hazalsaritacbeauty", "tel": "5384521488", "ilce": "Esenyurt"}, {"name": "Canser Yorulmaz Güzellik & Lazer", "user": "canseryorulmazguzellik", "tel": "5375996133", "ilce": "Esenyurt"}, {"name": "Dogam Güzellik Kaş Tasarım", "user": "dogam_salon", "tel": "5528360505", "ilce": "Esenyurt"}, {"name": "Tuğba Bucak Beauty", "user": "tugbabucakbeauty", "tel": "5462468781", "ilce": "Esenyurt"}, {"name": "Mekselina Güzellik Salonu", "user": "mekselinaguzellik", "tel": "5399510277", "ilce": "Esenyurt"}, {"name": "Ünlem Kuaför Güzellik Merkezi", "user": "unlemkuafor", "tel": "2128535328", "ilce": "Esenyurt"}, {"name": "Esya Güzellik Salonu Esenyurt", "user": "esyaguzelliksalonu", "tel": "5303486749", "ilce": "Esenyurt"}, {"name": "İlknur Altaş Güzellik Merkezi", "user": "ilknuraltasguzellik", "tel": "5455725456", "ilce": "Esenyurt"}, {"name": "Mabel's Güzellik Merkezi", "user": "mabelsguzellik", "tel": "5421212620", "ilce": "Esenyurt"}, {"name": "En Lotus Güzellik Salonu", "user": "enlotusguzellik", "tel": "5422696561", "ilce": "Esenyurt"}, {"name": "Estething Esenyurt", "user": "estething", "tel": "5531251502", "ilce": "Esenyurt"}, {"name": "Beauty Palace Esenyurt", "user": "beautypalace_", "tel": "5334092545", "ilce": "Esenyurt"}, {"name": "City Clinic Esenyurt", "user": "istanbulcityclinic", "tel": "5421007315", "ilce": "Esenyurt"}, {"name": "Rüya Karasu Beauty Center", "user": "ruyakarasuuu", "tel": "5372420256", "ilce": "Esenyurt"}, {"name": "Azra Güzellik Salonu Esenyurt", "user": "azraguzelliksalonu_", "tel": "5304071365", "ilce": "Esenyurt"}, {"name": "EsenPlus+ Güzellik Merkezi", "user": "esenplusguzellik", "tel": "5461373736", "ilce": "Esenyurt"}, {"name": "NG Lazer Epilasyon Esenyurt", "user": "esenyurt_nglazerepilasyon", "tel": "5322028047", "ilce": "Esenyurt"}, {"name": "Biblo Güzellik Esenyurt", "user": "bibloguzellikesenyurt", "tel": "5309571517", "ilce": "Esenyurt"}, {"name": "Alves Güzellik Esenyurt", "user": "alvesguzellikesenyurt", "tel": "5434564449", "ilce": "Esenyurt"}, {"name": "Büşra Demirer Güzellik", "user": "busrademirerguzellik", "tel": "5344211815", "ilce": "Esenyurt"}, {"name": "Esenyurt İpek Kirpik (Selvi Naz)", "user": "ipek_kirpik_esenyurt", "tel": "5417227975", "ilce": "Esenyurt"}, {"name": "Deniz Kızı Kuaför Salonu", "user": "denizkizikuaforsalonu_", "tel": "2128542191", "ilce": "Esenyurt"}, {"name": "Salon Tuğba Esenyurt", "user": "salontugba_esenyurt", "tel": "5435090712", "ilce": "Esenyurt"}, {"name": "Tuncay Meriç Bayan Kuaförü", "user": "tuncaymerickuafor", "tel": "2126990137", "ilce": "Esenyurt"}, {"name": "Innovation Küçükçekmece Güzellik", "user": "innovation.kucukcekmece", "tel": "5421939492", "ilce": "Küçükçekmece"}, {"name": "Viva Saç Ve Güzellik", "user": "vivaguzelliksalonu", "tel": "2126246424", "ilce": "Küçükçekmece"}, {"name": "Diva Form Güzellik", "user": "diva_form", "tel": "2125990032", "ilce": "Küçükçekmece"}, {"name": "İpeksi Düşler Halkalı Güzellik Merkezi", "user": "ipeksiduslerbeauty", "tel": "5330918004", "ilce": "Küçükçekmece"}, {"name": "Lady Güzellik Salonu", "user": "ladyguzelliksalonusefakoy", "tel": "5394919227", "ilce": "Küçükçekmece"}, {"name": "Seri Life Beauty Center", "user": "serife_beautycenter_sefakoy", "tel": "5010540335", "ilce": "Küçükçekmece"}, {"name": "ROSSO Beauty", "user": "sefakoyrosso", "tel": "5316067504", "ilce": "Küçükçekmece"}, {"name": "Gesy Atakent VIP Güzellik Salonu", "user": "gesyatakentvip", "tel": "5326005370", "ilce": "Küçükçekmece"}, {"name": "Tugba Yalcın Studio Güzellik Salonu", "user": "tugbayalcinstudio", "tel": "2124710051", "ilce": "Küçükçekmece"}, {"name": "Atakent Derma Güzellik", "user": "atakentdermaguzellik", "tel": "5073822726", "ilce": "Küçükçekmece"}, {"name": "Parle Beauty Atakent", "user": "parlebeautyatakent", "tel": "5309106368", "ilce": "Küçükçekmece"}, {"name": "Fatma Albayrak Güzellik", "user": "fatmaalbayrakguzellik", "tel": "5323746025", "ilce": "Küçükçekmece"}, {"name": "Dilek Sarıçiçek Güzellik", "user": "dileksaricicekguzellik", "tel": "5397306847", "ilce": "Küçükçekmece"}, {"name": "Honey Nail", "user": "honeynail_bar", "tel": "5544562904", "ilce": "Küçükçekmece"}, {"name": "Şahine Beauty", "user": "sahinebeauty", "tel": "5347493076", "ilce": "Küçükçekmece"}, {"name": "Sibel Eylül Güzellik Salonu", "user": "si_beautysalon", "tel": "5337937207", "ilce": "Küçükçekmece"}, {"name": "L'ucita Güzellik & Bakım", "user": "lucitaguzellik", "tel": "5421348334", "ilce": "Küçükçekmece"}, {"name": "Berna Nail Halkalı", "user": "bernabeautynaillll", "tel": "5315165470", "ilce": "Küçükçekmece"}, {"name": "Mercan Güzellik Salonu", "user": "mercan.guzellik", "tel": "5428084556", "ilce": "Küçükçekmece"}, {"name": "Sortie Güzellik Merkezi", "user": "sortieguzellik", "tel": "5421701170", "ilce": "Küçükçekmece"}, {"name": "NK Bayan Kuaförü", "user": "atakent_nk_kuafor", "tel": "2126938246", "ilce": "Küçükçekmece"}, {"name": "Hilal Barış Beauty Center", "user": "hilalbarisbeautycenter", "tel": "5349608676", "ilce": "Küçükçekmece"}, {"name": "Pırlanta Güzellik Merkezi", "user": "sefakoypirlantaguzellik", "tel": "5422122549", "ilce": "Küçükçekmece"}, {"name": "Dermapoint Estetik", "user": "dermapointestetik", "tel": "5415982829", "ilce": "Küçükçekmece"}, {"name": "Liz Bayan Kuaförü", "user": "lizbayankuaforu", "tel": "5312639675", "ilce": "Küçükçekmece"}, {"name": "Pendik Güzellik Salonu", "user": "pendik.guzellik", "tel": "5414857004", "ilce": "Pendik"}, {"name": "İremsi Nail Art Studio", "user": "iremsinails", "tel": "5465337560", "ilce": "Pendik"}, {"name": "Seda Aydın Nail Studio", "user": "pendikproteztirnak", "tel": "5528817332", "ilce": "Pendik"}, {"name": "Estemol Estetik ve Güzellik Merkezi", "user": "estemolkurtkoy", "tel": "5421705252", "ilce": "Pendik"}, {"name": "Doğalife Güzellik", "user": "dogalifeguzellik", "tel": "5303844372", "ilce": "Pendik"}, {"name": "Pendik Lotus Güzellik", "user": "pendiklotusgzl", "tel": "5369538626", "ilce": "Pendik"}, {"name": "Zeus Güzellik", "user": "zeusguzellikpendik", "tel": "5054766004", "ilce": "Pendik"}, {"name": "Estetik House Pendik", "user": "estetikhousependik", "tel": "5302386083", "ilce": "Pendik"}, {"name": "Sova Beauty Center", "user": "sovabeautycenter", "tel": "5013366666", "ilce": "Pendik"}, {"name": "Beauty Boss Kurtköy", "user": "beautybosskurtkoy", "tel": "5076123442", "ilce": "Pendik"}, {"name": "Pendik Protez Tırnak (Şeyma)", "user": "nailbyseyma", "tel": "5300753418", "ilce": "Pendik"}, {"name": "Mor Kuaför Kurtköy", "user": "morkuafor.kurtkoy", "tel": "5362042272", "ilce": "Pendik"}, {"name": "La Vita Bella Luxury Hair Studio", "user": "lavitabellakuafor", "tel": "5519339910", "ilce": "Pendik"}, {"name": "The Best Kuaför Kurtköy", "user": "thebestkuaforkurtkoy", "tel": "5322775601", "ilce": "Pendik"}, {"name": "Pendik Zeyma Güzellik Merkezi", "user": "zeymaguzellik", "tel": "5393653934", "ilce": "Pendik"}, {"name": "Pendik Cilt Bakımı", "user": "pendikciltbakimi", "tel": "5356647409", "ilce": "Pendik"}, {"name": "Ayçiçek Güzellik Salonu", "user": "aycicekguzellik", "tel": "5372724026", "ilce": "Pendik"}, {"name": "San Kuaför Pendik", "user": "sankuaforpendikk", "tel": "5393900462", "ilce": "Pendik"}, {"name": "Pendik Kuaför Müjgan", "user": "kuafor_mujganpendik", "tel": "5317471617", "ilce": "Pendik"}, {"name": "Pendik Güzellik Merkezi", "user": "pendikguzellikmerkezi", "tel": "8508401141", "ilce": "Pendik"}, {"name": "Halen Güzellik ve Bakım Sarayı", "user": "zayiflama_epilasyon_pendik", "tel": "5065042300", "ilce": "Pendik"}, {"name": "AquaLife Beauty Pendik", "user": "aqualifependik", "tel": "5316375555", "ilce": "Pendik"}, {"name": "Nsn Kuaför & Güzellik Salonu", "user": "nsnkuafor", "tel": "2163541006", "ilce": "Pendik"}, {"name": "Güven Kuaför Pendik", "user": "guvenkuaforpendik", "tel": "5323833091", "ilce": "Pendik"}, {"name": "Aquaplus Spa Pendik", "user": "aquaspa.pendik", "tel": "5301532016", "ilce": "Pendik"}, {"name": "Ceres Spa", "user": "ceresspa", "tel": "5309750072", "ilce": "Pendik"}, {"name": "Estedore Pendik", "user": "estedore_pendik", "tel": "5055955084", "ilce": "Pendik"}, {"name": "Este La Vie", "user": "este_la_vie", "tel": "5321725417", "ilce": "Pendik"}, {"name": "Med-İst Beauty Center", "user": "medistbeautycenter", "tel": "5521641141", "ilce": "Pendik"}, {"name": "Vokkap Coiffure", "user": "vokkapcoiffure", "tel": "5324142840", "ilce": "Pendik"}, {"name": "Estesline Güzellik Salonu", "user": "estesline_guzellik", "tel": "2124891131", "ilce": "Bağcılar"}, {"name": "MB Beauty Center", "user": "mbbeauty.center", "tel": "5011438191", "ilce": "Bağcılar"}, {"name": "Bahar Acar Güzellik Salonu", "user": "baharacarofficiall", "tel": "5522007425", "ilce": "Bağcılar"}, {"name": "Bien Beauty", "user": "bienbeautyy", "tel": "5455235856", "ilce": "Bağcılar"}, {"name": "Almila Bayan Kuaförü", "user": "almilabeautyy", "tel": "2124624786", "ilce": "Bağcılar"}, {"name": "Starliçe Estetik Güzellik", "user": "starliceguzelliksalonu", "tel": "2125086696", "ilce": "Bağcılar"}, {"name": "Türkan Güven Make Up & Beauty", "user": "turkanguvenmakeup_beauty", "tel": "5451971015", "ilce": "Bağcılar"}, {"name": "Este Valeria Güzellik Salonu", "user": "valeriaguzelliksalonuu", "tel": "2125625012", "ilce": "Bağcılar"}, {"name": "Bluna Güzellik Salonu", "user": "blunaguzelliksalonu", "tel": "2126427764", "ilce": "Bağcılar"}, {"name": "Mn Lavin Güzellik Merkezi", "user": "mn_lavin_beauty", "tel": "5305403450", "ilce": "Bağcılar"}, {"name": "Masal Güzellik Hair Design", "user": "masallguzellik", "tel": "5382926580", "ilce": "Bağcılar"}, {"name": "Cennet Güzellik Salonu", "user": "cennetguzelliksalonu", "tel": "2126285253", "ilce": "Bağcılar"}, {"name": "Aris İstanbul Güzellik Salonu", "user": "arisguneslivip", "tel": "5336036171", "ilce": "Bağcılar"}, {"name": "Reina Güzellik Merkezi Güneşli", "user": "reinaguzellikgunesli", "tel": "5528508583", "ilce": "Bağcılar"}, {"name": "Sevim Alan Bağcılar", "user": "sevimalanbagcilarr", "tel": "5300877021", "ilce": "Bağcılar"}, {"name": "Kadriye Kişisel Bakım Salonu", "user": "kadriyekisiselbakim", "tel": "5446148089", "ilce": "Bağcılar"}, {"name": "Melek Hair Makeup Studio", "user": "melekhairmakeupstudio", "tel": "2126467576", "ilce": "Bağcılar"}, {"name": "Günel Güzellik Salonu", "user": "beautygunel", "tel": "5307986130", "ilce": "Bağcılar"}, {"name": "Özüm Güzellik Bağcılar", "user": "ozumguzellik", "tel": "5386986158", "ilce": "Bağcılar"}, {"name": "Tuğba Şenyer Güzellik & Moda Evi", "user": "tugbasenyerguzellikmoda", "tel": "5527034241", "ilce": "Bağcılar"}, {"name": "Yelize Güzellik", "user": "yelizeguzellik", "tel": "5323562637", "ilce": "Bağcılar"}, {"name": "Miranda Beauty & Nail", "user": "miranda.beautynail", "tel": "5392028855", "ilce": "Bağcılar"}, {"name": "Youna Beauty Studio", "user": "studioyouna", "tel": "5304138464", "ilce": "Bağcılar"}, {"name": "Deniz Sarya Güzellik", "user": "denizsarya.guzellik", "tel": "2125640965", "ilce": "Bağcılar"}, {"name": "Nur Ürer Nail SPA", "user": "nur_urer", "tel": "5343115572", "ilce": "Bağcılar"}, {"name": "Atelier Esteméka", "user": "estemeka.atelier", "tel": "5426107725", "ilce": "Bağcılar"}, {"name": "Dilara Adıgüzel Makeup & Beauty", "user": "dilaraadiguzelbeauty", "tel": "5454670288", "ilce": "Bağcılar"}, {"name": "Nez Demir Güzellik Bağcılar", "user": "nezdemir_bagcilar", "tel": "5339682633", "ilce": "Bağcılar"}, {"name": "Tyana Güzellik", "user": "tyana.guzellikk", "tel": "2127414918", "ilce": "Bağcılar"}, {"name": "Gamze Yıldırım Beauty Center", "user": "gamzeyildirimbeautyy", "tel": "5305604934", "ilce": "Bağcılar"}, {"name": "Arzu Bulut Güzellik Bahçelievler", "user": "arzubulutbahcelievler", "tel": "2122752985", "ilce": "Bahçelievler"}, {"name": "BM Beauty Bahçelievler", "user": "bmbeautybahcelievler", "tel": "5445936968", "ilce": "Bahçelievler"}, {"name": "Songül Sesli Güzellik Merkezi", "user": "songulseslibeauty", "tel": "5323721072", "ilce": "Bahçelievler"}, {"name": "DESMO Güzellik Şirinevler", "user": "desmocollinguzellik", "tel": "5326015434", "ilce": "Bahçelievler"}, {"name": "House Beauty Şirinevler", "user": "house_beauty_sirinevler", "tel": "5010644280", "ilce": "Bahçelievler"}, {"name": "Elnura Beauty Center", "user": "elnurabeautycenter", "tel": "5337167275", "ilce": "Bahçelievler"}, {"name": "Şirinevler Güzellik Merkezi", "user": "sirinevlerguzellikmerkezi", "tel": "5451344365", "ilce": "Bahçelievler"}, {"name": "Etic Point Güzellik Merkezi", "user": "eticpoint", "tel": "2125565096", "ilce": "Bahçelievler"}, {"name": "Diva Bayan Kuaförü", "user": "diva_bayan_kuaforu", "tel": "2126399323", "ilce": "Bahçelievler"}, {"name": "Yıldız Bayan Kuaförü", "user": "yldzbayankuaforu", "tel": "5075060066", "ilce": "Bahçelievler"}, {"name": "Mediplast Güzellik Merkezi", "user": "mediplast.guzellik", "tel": "5526506000", "ilce": "Başakşehir"}, {"name": "Kübra Toksoy Beauty Home", "user": "kubratoksoybeauty", "tel": "2126721829", "ilce": "Başakşehir"}, {"name": "Neslim Güngen Bahçeşehir", "user": "neslimgungenbahcesehir", "tel": "5323541056", "ilce": "Başakşehir"}, {"name": "Deniz Beauty Studio Başakşehir", "user": "denizbeautybasaksehir", "tel": "5054509055", "ilce": "Başakşehir"}, {"name": "Sis Güzellik Merkezi Bahçeşehir", "user": "bahcesehirproteztrnak", "tel": "5305194164", "ilce": "Başakşehir"}, {"name": "Nur Özbaysar Kaş Tasarım", "user": "nurkastasarimm", "tel": "5340144364", "ilce": "Başakşehir"}, {"name": "Viktoria İpek Kirpik Bahçeşehir", "user": "istanbul.kirpik.viktoria", "tel": "5058335059", "ilce": "Başakşehir"}, {"name": "Semra Bayram Beauty Center Kayaşehir", "user": "semrabayramkayasehir", "tel": "5462636062", "ilce": "Başakşehir"}, {"name": "Teo Güzellik Merkezi", "user": "teoguzellikmerkezi", "tel": "2128011301", "ilce": "Başakşehir"}, {"name": "Crea Professionel İpek Kirpik", "user": "ipekkirpikbahcesehir", "tel": "2126696332", "ilce": "Başakşehir"}, {"name": "Makeup Hazel", "user": "makeuphazelofficial", "tel": "2129091483", "ilce": "Başakşehir"}, {"name": "Emsal Doğan Bahçeşehir", "user": "emsaldoganbahcesehir", "tel": "2126080068", "ilce": "Başakşehir"}, {"name": "Arzu Yılmaz Güzellik Salonu", "user": "arzuyilmazguzellik", "tel": "5326770416", "ilce": "Başakşehir"}, {"name": "Nis Kuaför Kayaşehir", "user": "niskuaforkayasehir", "tel": "2129092678", "ilce": "Başakşehir"}, {"name": "Pınar Beauty Studio", "user": "pinarbeautystudioo", "tel": "5324428389", "ilce": "Başakşehir"}, {"name": "Maabella Güzellik Salonu", "user": "maabellaguzelliksalonu", "tel": "5380915649", "ilce": "Sultangazi"}, {"name": "His Beauty Sultangazi", "user": "hisbeautysultangazisubesi", "tel": "5357929736", "ilce": "Sultangazi"}, {"name": "Ezgi Aslan Güzellik Merkezi", "user": "ezgiaslanguzelliksalonu", "tel": "5345493757", "ilce": "Sultangazi"}, {"name": "Nis Kuaför Sultangazi", "user": "nis_kuafor", "tel": "2124757553", "ilce": "Sultangazi"}, {"name": "Sayannova Güzellik Salonu", "user": "sayannova.sultangazi", "tel": "2125940204", "ilce": "Sultangazi"}, {"name": "Hayel Güzellik Salonu", "user": "hayelguzelliksultangazi", "tel": "5616116621", "ilce": "Sultangazi"}, {"name": "Epipia Güzellik Salonu", "user": "epipiaguzelliksalonu", "tel": "5550593034", "ilce": "Sultangazi"}, {"name": "Karen Güzellik Salonu", "user": "karen.beauty.center", "tel": "5332532708", "ilce": "Sultangazi"}, {"name": "Özlem Gökkaya Beauty", "user": "ozlemgokkayabeauty", "tel": "5061076200", "ilce": "Sultangazi"}, {"name": "Zehra Çelik Güzellik Salonu", "user": "zehracelikguzellik", "tel": "5068155858", "ilce": "Sultangazi"}, {"name": "Işık Koca Güzellik Merkezi", "user": "isikkocaguzellik", "tel": "5549575700", "ilce": "Sultangazi"}, {"name": "Sude Naz Güzellik", "user": "sudenazguzellik", "tel": "5396366755", "ilce": "Sultangazi"}, {"name": "Semt Bayan Kuaförü", "user": "semtbayankuaforu", "tel": "2126190661", "ilce": "Sultangazi"}, {"name": "Vip İstanbul Güzellik Maltepe", "user": "vipistanbulguzellikmaltepe", "tel": "5423441511", "ilce": "Maltepe"}, {"name": "Pina Güzellik Salonu", "user": "pina_beauty_house", "tel": "5393423487", "ilce": "Maltepe"}, {"name": "Emsal Doğan Maltepe", "user": "emsaldoganmaltepe", "tel": "5334306433", "ilce": "Maltepe"}, {"name": "ESTEDORE Maltepe", "user": "estedore_maltepe", "tel": "8508115444", "ilce": "Maltepe"}, {"name": "B&T Beauty Güzellik Merkezi", "user": "btbeautymaltepe", "tel": "5335838174", "ilce": "Maltepe"}, {"name": "Espina Güzellik", "user": "espinaguzellik", "tel": "5324953333", "ilce": "Maltepe"}, {"name": "Dore Estetica", "user": "doreesteticaguzellik", "tel": "5539468906", "ilce": "Maltepe"}, {"name": "Este Elitta Küçükyalı", "user": "esteelitta_kucukyali", "tel": "2163662416", "ilce": "Maltepe"}, {"name": "Eylül Öztürk Maltepe", "user": "eylulozturkmaltepe", "tel": "5326893930", "ilce": "Maltepe"}, {"name": "Protez Tırnak Maltepe", "user": "nail_land_maltepe", "tel": "5013250817", "ilce": "Maltepe"}, {"name": "Beyza Beauty Bar", "user": "beyzabeautybar", "tel": "5435988098", "ilce": "Maltepe"}, {"name": "Rose Nail Studio Maltepe", "user": "rosenailstudiomaltepe", "tel": "5304457991", "ilce": "Maltepe"}, {"name": "Ecem Gürkan Beauty", "user": "ecemgurkanbeautymaltepe", "tel": "5424620523", "ilce": "Maltepe"}, {"name": "Sanaz Ganioglu Makeup", "user": "sanaz_arman_makeup", "tel": "5385282492", "ilce": "Maltepe"}, {"name": "Nermin Kaş Tasarım", "user": "nerminkastasarim", "tel": "5525490009", "ilce": "Maltepe"}, {"name": "Maltepe Gamze Güzellik Merkezi", "user": "gamze.guzellik.merkezi", "tel": "5533577728", "ilce": "Maltepe"}, {"name": "SS Beauty Songül", "user": "ssbeautysongul", "tel": "5377866281", "ilce": "Maltepe"}, {"name": "Tuğba Çakıroğlu Bora Makeup", "user": "tubamakeup", "tel": "5421208061", "ilce": "Maltepe"}, {"name": "Albina Beauty Maltepe", "user": "albina_beauty_istanbul", "tel": "5541188741", "ilce": "Maltepe"}, {"name": "Aylin İpek Beauty", "user": "aylinipekbeauty", "tel": "5524894680", "ilce": "Maltepe"}, {"name": "Maltepe Kuaför Bülent Cansu", "user": "bulentcansu_bc", "tel": "2164423085", "ilce": "Maltepe"}, {"name": "San Kuaför Maltepe", "user": "sankuaformaltepe", "tel": "5413343793", "ilce": "Maltepe"}, {"name": "Serkan Güney Maltepe Kuaför", "user": "gnykuafor", "tel": "5317011159", "ilce": "Maltepe"}, {"name": "Es Fatih Samıkıran", "user": "fatihsmkrnn", "tel": "5387716356", "ilce": "Maltepe"}, {"name": "Halil Kuaför Güzellik Salonu", "user": "halilkuaformaltepe", "tel": "5324766349", "ilce": "Maltepe"}, {"name": "Maltepe Kuaför Ruşen Aycı", "user": "kuaforrusen", "tel": "5357403718", "ilce": "Maltepe"}, {"name": "Coşkun Kurban Kuaför", "user": "coskunkurban", "tel": "2163056111", "ilce": "Maltepe"}, {"name": "Violet Kuaför Maltepe", "user": "salonvioletmaltepe", "tel": "5382597791", "ilce": "Maltepe"}, {"name": "Hair Station Maltepe Park AVM", "user": "hairstationmaltepe", "tel": "5053890953", "ilce": "Maltepe"}, {"name": "Gilya Beauty Maltepe", "user": "gilyabeauty", "tel": "5064068086", "ilce": "Maltepe"}, {"name": "The Beauty Almina Çiçek", "user": "thebeautyalminacicek", "tel": "5337662738", "ilce": "Maltepe"}, {"name": "Beauty AY Güzellik Merkezi", "user": "beautyayguzellik", "tel": "5010662525", "ilce": "Maltepe"}, {"name": "Jaya Estetik", "user": "jayaestetik.ist", "tel": "5466494003", "ilce": "Maltepe"}, {"name": "For You Güzellik Merkezi", "user": "foryoukuaforoffical", "tel": "5326718190", "ilce": "Maltepe"}, {"name": "Mac Güzellik & Estetik", "user": "macestetik34", "tel": "5337850623", "ilce": "Maltepe"}, {"name": "Shilibao Güzellik Salonu", "user": "shilibaoguzellik", "tel": "5462406501", "ilce": "Maltepe"}, {"name": "Elissa Beauty And Nail", "user": "elissabeautyandnail", "tel": "5547784454", "ilce": "Maltepe"}, {"name": "Halil & Bahar Kuaför", "user": "halilbaharkuafor", "tel": "5362991522", "ilce": "Maltepe"}, {"name": "Sultan Demir Güzellik", "user": "sultandemirguzellik", "tel": "5364085457", "ilce": "Maltepe"}, {"name": "Kuaför NT Güzellik", "user": "kuafor.nt.guzellik", "tel": "5313140881", "ilce": "Maltepe"}, {"name": "Lumasea Studio", "user": "lumaseastudio", "tel": "5521131224", "ilce": "Maltepe"}, {"name": "Miss Güzellik Maltepe", "user": "miss_guzellik", "tel": "2163990818", "ilce": "Maltepe"}, {"name": "Beauty Nova Maltepe", "user": "beautynovamaltepe", "tel": "5058148924", "ilce": "Maltepe"}, {"name": "Ms Hair & Beauty Salon", "user": "misscoiffeurtr", "tel": "5421870040", "ilce": "Maltepe"}, {"name": "Ulus Güzellik", "user": "ulus_guzellik", "tel": "5078385342", "ilce": "Maltepe"}, {"name": "Zea Hair Shine", "user": "zeahairshine", "tel": "5418239612", "ilce": "Maltepe"}, {"name": "Podo Lime Studio Maltepe", "user": "podo_lime_studio", "tel": "5469758727", "ilce": "Maltepe"}, {"name": "Epilady Kişisel Bakım Maltepe", "user": "epiladymaltepe", "tel": "5415167122", "ilce": "Maltepe"}, {"name": "Özlem Karakulak Kuaför Güzellik", "user": "ozlemkuafor_guzellikmaltepe", "tel": "5333836248", "ilce": "Maltepe"}, {"name": "Bi'O Kişisel Bakım ve Güzellik", "user": "bio.guzellik", "tel": "5466290943", "ilce": "Maltepe"}, {"name": "Salon Ema", "user": "emakuafoor", "tel": "5413444745", "ilce": "Maltepe"}, {"name": "Orhan Yurtseven Hair Studio", "user": "orhanyurtsevenkuafor", "tel": "5333015005", "ilce": "Maltepe"}, {"name": "Ezgi Emil Solaryum & Güzellik", "user": "ezgiemilsolaryumveguzellik", "tel": "2165101480", "ilce": "Maltepe"}, {"name": "Feliz Güzellik", "user": "felizguzellikk", "tel": "5421262553", "ilce": "Maltepe"}, {"name": "Bülent Uzun Bayan Kuaförü", "user": "ebru_bulentt_", "tel": "5364547366", "ilce": "Maltepe"}, {"name": "Yasemin Nail Art Studio", "user": "yasemin.nailart.studio", "tel": "5527211428", "ilce": "Maltepe"}, {"name": "Glowhill Beauty", "user": "glowhillbeauty", "tel": "5385499898", "ilce": "Maltepe"}, {"name": "Salon Yeşilçam", "user": "salonyesilcamm", "tel": "5426062959", "ilce": "Maltepe"}, {"name": "Şenay Kuaför ve Güzellik Salonu", "user": "senaykuafor.salonu", "tel": "5330589804", "ilce": "Maltepe"}, {"name": "Venüs Güzellik Salonu", "user": "venus.guzelliksalonu", "tel": "5323626733", "ilce": "Maltepe"}, {"name": "Eda Avşar Beauty", "user": "edaavsarbeauty", "tel": "5063162028", "ilce": "Maltepe"}, {"name": "Aura Saç Merkezi", "user": "aurasacmerkezi", "tel": "5374212546", "ilce": "Maltepe"}, {"name": "Şahika Beauty Center", "user": "sahikabeautycenter", "tel": "5539438105", "ilce": "Maltepe"}, {"name": "Ahmet Şirin Kuaför", "user": "ahmetssirin", "tel": "5312041081", "ilce": "Maltepe"}, {"name": "Tuse Kiraz Beauty", "user": "tusekirazbeauty", "tel": "5528575706", "ilce": "Maltepe"}, {"name": "Moy Kuaför Hair Design", "user": "moykuafor", "tel": "5425927889", "ilce": "Maltepe"}, {"name": "Uzm. Est. Sakine Camcı", "user": "uzm.est.sakinecamci", "tel": "5315833127", "ilce": "Maltepe"}, {"name": "Grace & Glow Beauty", "user": "grace_glow_beauty", "tel": "5383106779", "ilce": "Maltepe"}, {"name": "Güler Özgal Beauty Center", "user": "gulerozgalbeauty", "tel": "5416506641", "ilce": "Maltepe"}, {"name": "Pırıltı Güzellik Merkezi Altıntepe", "user": "piriltialtintepe", "tel": "5347853919", "ilce": "Maltepe"}, {"name": "Pırıltı Güzellik ve Taner Bingöl Kuaför", "user": "piriltiguzelliks", "tel": "2165181619", "ilce": "Maltepe"}, {"name": "Buket Güzellik Salonu", "user": "buketguzellik", "tel": "2164891971", "ilce": "Maltepe"}, {"name": "Ametist Kişisel Bakım Merkezi", "user": "ametistkisiselbakim", "tel": "5313016164", "ilce": "Maltepe"}, {"name": "Art of Can", "user": "artoffcan", "tel": "2164590585", "ilce": "Maltepe"}, {"name": "Studio By Aleyna", "user": "studiobyaleyna", "tel": "2164418747", "ilce": "Maltepe"}, {"name": "Paris's Kuaför", "user": "womenpariss", "tel": "5340174713", "ilce": "Maltepe"}, {"name": "Salon Şirin", "user": "salonsirin", "tel": "5464531442", "ilce": "Maltepe"}, {"name": "Boleyn Studio", "user": "boleyn.studio", "tel": "5308343579", "ilce": "Maltepe"}, {"name": "La Belle Vie Güzellik Merkezi", "user": "labellevie1992", "tel": "5330342010", "ilce": "Maltepe"}, {"name": "VelVas Profesyonel", "user": "velvascom", "tel": "5437141874", "ilce": "Maltepe"}, {"name": "Işıl Kuaför Maltepe", "user": "isilkuaformaltepe", "tel": "5324091904", "ilce": "Maltepe"}, {"name": "Beyond Maltepe", "user": "beyondmaltepe", "tel": "5421024026", "ilce": "Maltepe"}, {"name": "Venüs Güzellik & Kuaför", "user": "venus.guzellik", "tel": "5056406267", "ilce": "Maltepe"}, {"name": "Madam Giz", "user": "madam.giz", "tel": "5325455161", "ilce": "Maltepe"}, {"name": "Arya Bektaş Maltepe", "user": "aryabektasmaltepe", "tel": "5304540124", "ilce": "Maltepe"}, {"name": "Makeup & Hair Istanbul Maltepe", "user": "makeup_be_hot", "tel": "5352309559", "ilce": "Maltepe"}, {"name": "NurHair & Makeup Studio", "user": "nurhairmakeupstudioo", "tel": "5536488118", "ilce": "Maltepe"}, {"name": "Mehtap Yıldırım Makeup", "user": "makeuppmehtapyldrm", "tel": "5424451654", "ilce": "Maltepe"}, {"name": "Zehra Yetgin Bridal Makeup", "user": "makeupzehrayetgin", "tel": "5374900701", "ilce": "Maltepe"}, {"name": "Leyla Güzellik Salonu", "user": "leylaguzelliksalonuu", "tel": "5448472342", "ilce": "Maltepe"}, {"name": "Sesa Nail Bar", "user": "sesanailbar", "tel": "5516680777", "ilce": "Maltepe"}, {"name": "AC Nail Concept Maltepe", "user": "ac.nailconcept.maltepe", "tel": "5398251372", "ilce": "Maltepe"}, {"name": "Hilal Yayan Sağlıklı Yaşam Merkezi", "user": "hilalyayansaglikliyasam", "tel": "5453625840", "ilce": "Maltepe"}, {"name": "Fatoş Akdoğan Vizyon Güzellik", "user": "vizyon.guzellik", "tel": "5541162404", "ilce": "Maltepe"}];
+
+  var DEFAULT_TPL = "Merhaba {kullanici} hesabınızı inceledim, işleriniz çok güzel ama gönderilerinizin etkileşimi yaptığınız işin kalitesini yansıtmıyor.\n\nBiz tam da bunu çözüyoruz: siz paylaşım yapar yapmaz gönderinize otomatik olarak beğeni, yorum ve görüntülenme geliyor. Hepsi Türk kadın hesaplarından. Yani sizin müşteri profilinize uygun görünüyor, yabancı bot kalabalığı değil.\n\nEğer denemek isterseniz de 1 hafta ücretsiz deneyebiliyorsunuz.";
+  var LABEL = { trial:"Deneme", sale:"Satın alım", no:"WhatsApp yok" };
+
+  var $ = function(id){ return document.getElementById(id); };
+  var listEl=$("list"), emptyEl=$("empty"), tplEl=$("tpl"), qEl=$("q"),
+      toastEl=$("toast"), showingEl=$("showing"), syncEl=$("syncline"), syncMsg=$("syncmsg"),
+      gate=$("gate"), gateErr=$("gateerr");
+
+  var status = {}, tpl = DEFAULT_TPL, updatedAt = null;
+  var filter="all", query="", inflight=0;
+
+  var log = [], lgQuery = "";
+  var lgBody=$("lgbody"), lgEmpty=$("lgempty"), lgTable=$("lgtable"),
+      lgShowing=$("lgshowing"), lgTels=$("lg-tels");
+  var GUNLER=["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"];
+
+  function setSync(cls,msg){ syncEl.className="syncline "+cls; syncMsg.textContent=msg; }
+
+  var toastTimer;
+  function toast(msg){
+    toastEl.textContent=msg; toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){ toastEl.classList.remove("show"); },1900);
+  }
+
+  function api(method, body){
+    return fetch("/api/state", {
+      method: method,
+      headers: body ? {"Content-Type":"application/json"} : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+      credentials: "same-origin"
+    }).then(function(r){
+      if(r.status === 401){ showGate(); throw new Error("auth"); }
+      if(!r.ok) return r.json().catch(function(){return {};}).then(function(j){ throw new Error(j.error||("HTTP "+r.status)); });
+      return r.json();
+    });
+  }
+
+  function adopt(data, keepTpl){
+    status = data.status || {};
+    log = Array.isArray(data.log) ? data.log.filter(Boolean) : [];
+    if(!keepTpl) { tpl = (data.tpl == null || data.tpl === "") ? DEFAULT_TPL : data.tpl; tplEl.value = tpl; }
+    updatedAt = data.updatedAt;
+    refresh();
+  }
+
+  function push(body){
+    inflight++;
+    setSync("saving","Kaydediliyor…");
+    api("POST", body).then(function(d){
+      adopt(d, document.activeElement === tplEl);
+      inflight--;
+      if(inflight === 0) setSync("on","İşaretler herkes için kaydediliyor.");
+    }).catch(function(e){
+      inflight--;
+      if(String(e.message) === "auth") return;
+      setSync("off","Kaydedilemedi: " + e.message);
+      toast("Kaydedilemedi, tekrar dene");
+    });
+  }
+
+  var statusOf = function(s){ return status[s.user] || "todo"; };
+
+  function setStatus(s, value){
+    var next = (statusOf(s) === value) ? null : value;
+    if(next === null) delete status[s.user]; else status[s.user] = next;   // iyimser
+    refresh();
+    push({ op:"set", user:s.user, value: next });
+  }
+
+  var messageFor = function(s){ return tpl.split("{kullanici}").join(s.user); };
+  var linkFor = function(s){ return "https://wa.me/90" + s.tel + "?text=" + encodeURIComponent(messageFor(s)); };
+
+  function counts(){
+    var c={todo:0,sent:0,trial:0,sale:0,no:0};
+    for(var i=0;i<SALONS.length;i++) c[statusOf(SALONS[i])]++;
+    return c;
+  }
+
+  function visible(){
+    var q=query.trim().toLowerCase();
+    return SALONS.filter(function(s){
+      if(filter!=="all" && statusOf(s)!==filter) return false;
+      if(!q) return true;
+      return (s.name+" "+s.user+" "+s.tel+" "+(s.ilce||"")).toLowerCase().indexOf(q)!==-1;
+    });
+  }
+
+  var CHECK='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 5"/></svg>';
+  var CROSS='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
+
+  function markButton(s, kind, cls){
+    var b=document.createElement("button");
+    b.className="btn mark "+cls; b.type="button"; b.textContent=LABEL[kind];
+    b.setAttribute("aria-pressed", String(statusOf(s)===kind));
+    b.addEventListener("click", function(){ setStatus(s, kind); });
+    return b;
+  }
+
+  function fmtTel(t){ return "0"+t.slice(0,3)+" "+t.slice(3,6)+" "+t.slice(6,8)+" "+t.slice(8); }
+
+  /* ---------- mesaj kaydı ---------- */
+
+  function pad2(n){ return (n<10?"0":"")+n; }
+  function isoOf(d){ return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()); }
+  function bugun(){ return isoOf(new Date()); }
+  function kaydir(iso, gun){
+    var p=iso.split("-");
+    return isoOf(new Date(+p[0], +p[1]-1, +p[2]+gun));
+  }
+  function normTel(v){
+    var t=String(v==null?"":v).replace(/\D/g,"");
+    if(t.length===12 && t.slice(0,2)==="90") t=t.slice(2);
+    if(t.length===11 && t.charAt(0)==="0") t=t.slice(1);
+    return t.slice(0,10);
+  }
+  function fmtGun(iso){
+    var p=String(iso||"").split("-");
+    if(p.length!==3) return iso;
+    return p[2]+"."+p[1]+"."+p[0];
+  }
+  function gunAdi(iso){
+    var p=String(iso||"").split("-");
+    if(p.length!==3) return "";
+    return GUNLER[new Date(+p[0], +p[1]-1, +p[2]).getDay()];
+  }
+
+  function logStats(){
+    var bg=bugun(), hafta=kaydir(bg,-6), toplam=0, bugunku=0, haftalik=0, nums={};
+    log.forEach(function(e){
+      var n=Number(e.count)||0;
+      toplam+=n; nums[e.tel]=1;
+      if(e.date===bg) bugunku+=n;
+      if(e.date>=hafta && e.date<=bg) haftalik+=n;
+    });
+    $("lg-today").textContent=bugunku;
+    $("lg-week").textContent=haftalik;
+    $("lg-total").textContent=toplam;
+    $("lg-nums").textContent=Object.keys(nums).length;
+
+    lgTels.innerHTML="";
+    Object.keys(nums).sort().forEach(function(t){
+      var o=document.createElement("option"); o.value=fmtTel(t); lgTels.appendChild(o);
+    });
+  }
+
+  function logVisible(){
+    var rows=log.slice().sort(function(a,b){
+      if(a.date!==b.date) return a.date<b.date ? 1 : -1;
+      return a.tel<b.tel ? -1 : (a.tel>b.tel ? 1 : 0);
+    });
+    var q=lgQuery.replace(/\s/g,"").toLowerCase();
+    if(!q) return rows;
+    return rows.filter(function(e){
+      return (e.tel+fmtTel(e.tel)+e.date+fmtGun(e.date)).replace(/\s/g,"").toLowerCase().indexOf(q)!==-1;
+    });
+  }
+
+  function renderLog(){
+    var rows=logVisible(), sum=0;
+    lgBody.innerHTML="";
+
+    rows.forEach(function(e){
+      sum += Number(e.count)||0;
+      var tr=document.createElement("tr");
+
+      var c1=document.createElement("td"); c1.className="tel"; c1.textContent=fmtTel(e.tel);
+      var c2=document.createElement("td"); c2.textContent=fmtGun(e.date);
+      var c3=document.createElement("td"); c3.className="day"; c3.textContent=gunAdi(e.date);
+
+      var c4=document.createElement("td"); c4.className="num";
+      var inp=document.createElement("input");
+      inp.type="number"; inp.className="cnt"; inp.min="0"; inp.max="100000"; inp.step="1";
+      inp.value=String(e.count);
+      inp.setAttribute("aria-label", fmtTel(e.tel)+" "+fmtGun(e.date)+" mesaj sayısı");
+      inp.addEventListener("change", function(){
+        var n=Math.round(Number(inp.value));
+        if(!isFinite(n) || n<0){ inp.value=String(e.count); return; }
+        if(n===Number(e.count)) return;
+        e.count=n; logStats();
+        push({ op:"log_set", id:e.id, count:n });
+      });
+      c4.appendChild(inp);
+
+      var c5=document.createElement("td"); c5.className="num";
+      var del=document.createElement("button");
+      del.className="del"; del.type="button"; del.textContent="Sil";
+      del.setAttribute("aria-label", fmtTel(e.tel)+" "+fmtGun(e.date)+" kaydını sil");
+      del.addEventListener("click", function(){
+        log=log.filter(function(x){ return x.id!==e.id; });
+        renderLog();
+        push({ op:"log_del", id:e.id });
+      });
+      c5.appendChild(del);
+
+      tr.appendChild(c1); tr.appendChild(c2); tr.appendChild(c3);
+      tr.appendChild(c4); tr.appendChild(c5);
+      lgBody.appendChild(tr);
+    });
+
+    lgTable.hidden = rows.length===0;
+    lgEmpty.hidden = rows.length>0;
+    lgEmpty.textContent = log.length===0
+      ? "Henüz kayıt yok — yukarıdaki kutudan ilk kaydını ekle."
+      : "Bu aramaya uyan kayıt yok.";
+    lgShowing.textContent = rows.length ? (rows.length+" kayıt · "+sum+" mesaj") : "";
+    logStats();
+  }
+
+  $("logform").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var tel=normTel($("lg-tel").value);
+    var date=$("lg-date").value;
+    var n=Math.round(Number($("lg-count").value));
+
+    if(tel.length<10){ toast("Telefon 10 hane olmalı"); $("lg-tel").focus(); return; }
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){ toast("Tarih seç"); $("lg-date").focus(); return; }
+    if(!isFinite(n) || n<1){ toast("Mesaj sayısı geçersiz"); $("lg-count").focus(); return; }
+
+    var hit=null;
+    for(var i=0;i<log.length;i++) if(log[i].tel===tel && log[i].date===date) hit=log[i];
+    if(hit){ hit.count=(Number(hit.count)||0)+n; toast("Mevcut kayda eklendi — toplam "+hit.count); }
+    else { log.push({ id:"gecici"+Date.now(), tel:tel, date:date, count:n }); toast("Kayıt eklendi"); }
+
+    $("lg-tel").value=fmtTel(tel);
+    $("lg-count").value="";
+    renderLog();
+    push({ op:"log_add", tel:tel, date:date, count:n });
+    $("lg-count").focus();
+  });
+
+  $("lgq").addEventListener("input", function(){ lgQuery=$("lgq").value; renderLog(); });
+
+  function showView(v){
+    $("view-salons").hidden = v!=="salons";
+    $("view-log").hidden = v!=="log";
+    var tb=document.querySelectorAll(".tab");
+    for(var i=0;i<tb.length;i++) tb[i].setAttribute("aria-selected", String(tb[i].getAttribute("data-v")===v));
+    try{ localStorage.setItem("panel_sekme", v); }catch(err){}
+    if(v==="log" && !$("lg-tel").value) $("lg-tel").focus();
+  }
+  var tabs=document.querySelectorAll(".tab");
+  for(var t=0;t<tabs.length;t++){
+    (function(b){ b.addEventListener("click", function(){ showView(b.getAttribute("data-v")); }); })(tabs[t]);
+  }
+
+  function render(){
+    var rows=visible();
+    listEl.innerHTML="";
+    emptyEl.hidden = rows.length>0;
+    showingEl.textContent = rows.length+" / "+SALONS.length+" salon";
+
+    rows.forEach(function(s){
+      var st=statusOf(s);
+      var li=document.createElement("li");
+      li.className="s-"+st;
+      li.setAttribute("data-user", s.user);
+      li.setAttribute("data-st", st);
+
+      var tick=document.createElement("button");
+      tick.className="tick"+(st==="todo"?"":" t-"+st);
+      tick.type="button";
+      tick.innerHTML = st==="no" ? CROSS : CHECK;
+      tick.setAttribute("aria-pressed", String(st!=="todo"));
+      tick.setAttribute("aria-label", s.name+" gönderildi olarak işaretle");
+      tick.addEventListener("click", function(){ setStatus(s,"sent"); });
+
+      var main=document.createElement("div");
+      main.innerHTML='<p class="name"></p><p class="meta"><b class="u"></b><span class="tel"></span><span class="ilce"></span><span class="fl"></span></p>';
+      main.querySelector(".name").textContent=s.name;
+      main.querySelector(".u").textContent="@"+s.user;
+      main.querySelector(".tel").textContent=fmtTel(s.tel);
+      main.querySelector(".ilce").textContent=s.ilce||"";
+      var fl=main.querySelector(".fl");
+      if(LABEL[st]){ fl.className="flag f-"+st; fl.textContent=LABEL[st]; }
+
+      var acts=document.createElement("div");
+      acts.className="acts";
+
+      var copy=document.createElement("button");
+      copy.className="btn"; copy.type="button"; copy.textContent="Kopyala";
+      copy.addEventListener("click", function(){
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(messageFor(s))
+            .then(function(){ toast("Mesaj kopyalandı"); })
+            .catch(function(){ toast("Kopyalanamadı"); });
+        } else toast("Kopyalanamadı");
+      });
+
+      var open=document.createElement("a");
+      open.className="btn primary"; open.href=linkFor(s);
+      open.target="_blank"; open.rel="noopener"; open.textContent="WhatsApp'ta aç";
+      open.addEventListener("click", function(){
+        if(statusOf(s)==="todo"){ status[s.user]="sent"; refresh(); push({op:"set",user:s.user,value:"sent"}); }
+      });
+
+      acts.appendChild(markButton(s,"no","m-no"));
+      acts.appendChild(markButton(s,"trial","m-trial"));
+      acts.appendChild(markButton(s,"sale","m-sale"));
+      acts.appendChild(copy); acts.appendChild(open);
+
+      li.appendChild(tick); li.appendChild(main); li.appendChild(acts);
+      listEl.appendChild(li);
+    });
+  }
+
+  function refresh(){
+    var c=counts(), total=SALONS.length;
+    var nodes=document.querySelectorAll("[data-c]");
+    for(var i=0;i<nodes.length;i++) nodes[i].textContent=c[nodes[i].getAttribute("data-c")];
+    $("bar-sale").style.width=(c.sale/total*100)+"%";
+    $("bar-trial").style.width=(c.trial/total*100)+"%";
+    $("bar-sent").style.width=(c.sent/total*100)+"%";
+    $("bar-no").style.width=(c.no/total*100)+"%";
+    var stats=document.querySelectorAll(".stat");
+    for(var j=0;j<stats.length;j++) stats[j].setAttribute("aria-pressed", String(stats[j].getAttribute("data-f")===filter));
+    render();
+    renderLog();
+  }
+
+  // filtreler
+  var stats=document.querySelectorAll(".stat");
+  for(var k=0;k<stats.length;k++){
+    (function(b){
+      b.addEventListener("click", function(){
+        filter = (filter===b.getAttribute("data-f")) ? "all" : b.getAttribute("data-f");
+        refresh();
+      });
+    })(stats[k]);
+  }
+  $("showall").addEventListener("click", function(){ filter="all"; refresh(); });
+  qEl.addEventListener("input", function(){ query=qEl.value; render(); });
+
+  tplEl.addEventListener("blur", function(){
+    if(tplEl.value === tpl) return;
+    tpl = tplEl.value;
+    push({ op:"tpl", tpl: tpl });
+  });
+
+  $("reset").addEventListener("click", function(){
+    if(!confirm("Tüm işaretler silinecek (gönderildi, deneme, satın alım, WhatsApp yok). Bu herkes için geçerli olur. Devam edilsin mi?")) return;
+    status = {}; refresh();
+    push({ op:"reset" });
+  });
+
+  // giriş
+  function showGate(){
+    gate.hidden = false;
+    gate.style.display = "grid";
+    setSync("off","Giriş gerekiyor.");
+    setTimeout(function(){ $("pw").focus(); }, 50);
+  }
+  $("gateform").addEventListener("submit", function(e){
+    e.preventDefault();
+    gateErr.textContent = "";
+    fetch("/api/login", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ password: $("pw").value }),
+      credentials:"same-origin"
+    }).then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(j){
+        if(r.ok) return j;
+        var why = { wrong:"Parola hatalı", empty:"Parola boş", method:"Yanlış istek" }[j.reason];
+        throw new Error(why || ("Sunucu hatası (" + r.status + ")" + (j.error ? ": " + j.error : "")));
+      });
+    }).then(function(){
+      gate.hidden = true;
+      gate.style.display = "none";
+      $("pw").value = "";
+      start();
+    }).catch(function(err){ gateErr.textContent = err.message; });
+  });
+
+  // ilk yükleme + periyodik tazeleme
+  function start(){
+    setSync("","Yükleniyor…");
+    api("GET").then(function(d){
+      adopt(d, false);
+      setSync("on","İşaretler herkes için kaydediliyor.");
+    }).catch(function(e){
+      if(String(e.message)==="auth") return;
+      setSync("off","Bağlanamadı: "+e.message);
+    });
+  }
+
+  setInterval(function(){
+    if(!gate.hidden || inflight>0) return;
+    if(document.hidden) return;
+    // kullanıcı bir kutuya yazıyorsa tazeleme yazdığını silmesin
+    var a=document.activeElement;
+    if(a && (a===tplEl || a.className==="cnt")) return;
+    api("GET").then(function(d){
+      if(d.updatedAt !== updatedAt) adopt(d, document.activeElement === tplEl);
+    }).catch(function(){});
+  }, 10000);
+
+  tplEl.value = tpl;
+  $("lg-date").value = bugun();
+  var kayitliSekme = "salons";
+  try{ kayitliSekme = localStorage.getItem("panel_sekme") || "salons"; }catch(err){}
+  showView(kayitliSekme === "log" ? "log" : "salons");
+  refresh();
+  start();
+})();
+</script>
+</body>
+</html>
