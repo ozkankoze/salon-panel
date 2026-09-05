@@ -1,0 +1,9 @@
+{
+  "name": "salon-panel",
+  "version": "1.11.0",
+  "private": true,
+  "description": "WhatsApp mesaj paneli - izinli liste + Excel ile ekleme",
+  "dependencies": {
+    "pg": "^8.23.0"
+  }
+}
