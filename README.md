@@ -21,7 +21,7 @@ Veritabanın zaten doluysa dokunmaz — mevcut işaretlerin olduğu gibi kalır.
 
 ```
 index.html                  panel (tek dosya, dışarıdan kütüphane yok)
-                            iki sekme: Salonlar + Mesaj Kaydı
+                            üç sekme: Salonlar + Website + Mesaj Kaydı
 api/state.js                durumu okuma + yazma + mesaj kaydı + ilk kurulum tohumu
 api/login.js                parola kontrolü
 api/health.js               teşhis ucu (gizli değer göstermez)
@@ -96,6 +96,36 @@ yazıyorsa her şey yolunda demektir.
 - Üstteki beş kutu tıklanabilir filtredir; "Denemeye geçti"ye basınca sadece onlar listelenir.
 - Mesaj şablonunu değiştirip **kutunun dışına tıkla** — herkes için kaydedilir.
 - **Sıfırla** herkes için sıfırlar, onay sorar. (Mesaj kayıtlarına dokunmaz.)
+
+---
+
+## Website sekmesi
+
+Salonlar sekmesiyle **aynı şekilde** çalışan ikinci bir liste. Farkı: boş başlar,
+kendi mesaj şablonu vardır ve sayaçları ayrı tutulur.
+
+- Liste **Excel'den ekle** ile doldurulur; hazır 2134 salona hiç karışmaz.
+- Kendi mesaj şablonu var (**Website mesaj şablonu** kutusu). Salonlar
+  sekmesindeki şablondan tamamen bağımsızdır, ikisi ayrı kaydedilir.
+  Yer tutucular: `{isim}` kayıt adı, `{kullanici}` Instagram kullanıcı adı,
+  `{site}` web sitesi.
+- Aynı dört işaret (Gönderildi / Deneme / Satın alım / WhatsApp yok) ve aynı
+  filtreler geçerli, ama **sayaçlar bu sekmeye özeldir** — buradaki bir işaret
+  Salonlar sekmesinin sayılarını değiştirmez, tersi de öyle.
+- **Sıfırla** yalnızca bu sekmenin işaretlerini siler; kayıtların kendisi durur.
+- Excel'de bir **web sitesi** sütunu varsa satırda tıklanabilir link olarak görünür
+  ve `{site}` yer tutucusuna girer. `salonadi.com` gibi yazılsa da `https://`
+  kendiliğinden tamamlanır; `http`/`https` dışındaki adresler yazılmaz.
+- Instagram sütunu boş olan kayıtlarda satırda `@kullanıcı` gösterilmez ve
+  `{kullanici}` yer tutucusu kaydın adına düşer.
+- Telefon kuralı aynı: sadece Türkiye cep numaraları (`5XXXXXXXXX`).
+
+Veritabanında bu sekme `data->'wstatus'`, `data->'wtpl'` ve `data->'wcustom'`
+alanlarında durur. Salonlar sekmesinin `status`/`tpl`/`custom` alanlarına
+dokunulmaz — göç gerekmez, eski kayıtlar olduğu gibi çalışır.
+
+**Mesaj Kaydı sekmesi ikisi için ortaktır** — numara başına günlük mesaj sayısı
+iki listeyi birlikte sayar, çünkü WhatsApp limiti listeye göre değil numaraya göre işler.
 
 ---
 
@@ -184,9 +214,14 @@ kapatılır, yerel bir Postgres'e de bağlanabilirsin.
 
 ## Excel / CSV ile salon ekleme
 
-Panelde **"Excel'den ekle"** düğmesi (Salonlar sekmesi, üst araç çubuğu).
+Panelde **"Excel'den ekle"** düğmesi (Salonlar ve Website sekmelerinin üst araç
+çubuğunda). Hangi sekmedeyken bastıysan kayıtlar **o sekmeye** eklenir; iki liste
+birbirine karışmaz ve tekrar kontrolü de sekme içinde yapılır (aynı numara iki
+listede ayrı ayrı bulunabilir).
 
 - `.xlsx`, `.xls`, `.csv` kabul eder. İlk satır başlık sayılır.
+- CSV'ler UTF-8 okunur; Excel'in Windows-1254 çıktısı da kendiliğinden tanınır,
+  yani `İlçe` / `İzin Kaynağı` gibi başlıklar bozulmadan eşleşir.
 - Sütunlar otomatik eşleşir; yanlışsa açılır menülerden elle seçilir.
   Zorunlu olan iki alan: **Salon adı** ve **Telefon**.
 - Eklemeden önce her satır için durum gösterilir:
