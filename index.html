@@ -102,12 +102,26 @@
   input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
   .showing{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
 
+  /* toplu seçim */
+  .selall{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none;white-space:nowrap}
+  .selall input{width:16px;height:16px;margin:0;accent-color:var(--accent);cursor:pointer}
+  .selall:hover{color:var(--ink)}
+  .selacts{display:flex;flex-wrap:wrap;align-items:center;gap:7px;flex:1 1 100%;
+    border-top:1px dashed var(--line);padding-top:10px;margin-top:2px}
+  .selacts[hidden]{display:none}
+  .selacts .cnt{font-size:13px;font-weight:600;color:var(--accent-ink);white-space:nowrap;margin-right:2px}
+  .selacts .sep{flex:1}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .selacts .cnt{color:var(--accent)}}
+  :root[data-theme="dark"] .selacts .cnt{color:var(--accent)}
+
   ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
   li{
-    display:grid;grid-template-columns:26px minmax(0,1fr) auto;align-items:center;gap:14px;
+    display:grid;grid-template-columns:20px 26px minmax(0,1fr) auto;align-items:center;gap:14px;
     background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
     transition:opacity .2s ease, border-color .2s ease, background .2s ease;
   }
+  li.picked{outline:2px solid var(--accent);outline-offset:-1px;opacity:1}
+  input.pick{width:16px;height:16px;margin:0;accent-color:var(--accent);cursor:pointer;flex:none}
   li.s-sent{opacity:.55}
   li.s-sent .name{text-decoration:line-through;text-decoration-color:var(--faint)}
   li.s-no{border-color:var(--no);background:var(--no-soft)}
@@ -221,7 +235,7 @@
 
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
   @media (max-width:760px){
-    li{grid-template-columns:26px minmax(0,1fr);row-gap:10px}
+    li{grid-template-columns:20px 26px minmax(0,1fr);row-gap:10px}
     .acts{grid-column:1/-1;justify-content:flex-start}
     .fld{flex:1 1 100%}
     .fld.narrow{flex:1 1 100%}
@@ -325,6 +339,17 @@
   <div class="controls">
     <input type="search" id="q" placeholder="Salon, kullanıcı adı veya ilçe ara" aria-label="Ara">
     <span class="showing" id="showing"></span>
+    <label class="selall"><input type="checkbox" id="selall"><span id="selalltext">Tümünü seç</span></label>
+    <div class="selacts" id="selacts" hidden>
+      <span class="cnt" id="selcount"></span>
+      <button class="btn mark m-sent" type="button" data-bulk="sent">Gönderildi</button>
+      <button class="btn mark m-trial" type="button" data-bulk="trial">Deneme</button>
+      <button class="btn mark m-sale" type="button" data-bulk="sale">Satın alım</button>
+      <button class="btn mark m-no" type="button" data-bulk="no">WhatsApp yok</button>
+      <span class="sep"></span>
+      <button class="btn mark" type="button" data-bulk="clear">İşareti kaldır</button>
+      <button class="btn mark" type="button" data-bulk="cancel">Vazgeç</button>
+    </div>
   </div>
 
     <ul id="list"></ul>
@@ -357,6 +382,17 @@
     <div class="controls">
       <input type="search" id="w-q" placeholder="İsim, site, telefon veya şehir ara" aria-label="Website listesinde ara">
       <span class="showing" id="w-showing"></span>
+      <label class="selall"><input type="checkbox" id="w-selall"><span id="w-selalltext">Tümünü seç</span></label>
+      <div class="selacts" id="w-selacts" hidden>
+        <span class="cnt" id="w-selcount"></span>
+        <button class="btn mark m-sent" type="button" data-bulk="sent">Gönderildi</button>
+        <button class="btn mark m-trial" type="button" data-bulk="trial">Deneme</button>
+        <button class="btn mark m-sale" type="button" data-bulk="sale">Satın alım</button>
+        <button class="btn mark m-no" type="button" data-bulk="no">WhatsApp yok</button>
+        <span class="sep"></span>
+        <button class="btn mark" type="button" data-bulk="clear">İşareti kaldır</button>
+        <button class="btn mark" type="button" data-bulk="cancel">Vazgeç</button>
+      </div>
     </div>
 
     <ul id="w-list"></ul>
@@ -510,6 +546,39 @@
     });
   }
 
+  /* Toplu işaretleme. Sunucuya tek istekte binlerce satır göndermek yerine
+     parçalara böler; her parça sunucuda tek SQL ile yazılır. */
+  function pushBulk(board, items){
+    var users = Object.keys(items), CH = 1500, i = 0;
+    if(!users.length) return;
+    inflight++;
+    setSync("saving","Kaydediliyor… (0/"+users.length+")");
+
+    function parca(){
+      if(i >= users.length){
+        inflight--;
+        if(inflight === 0) setSync("on","İşaretler herkes için kaydediliyor.");
+        return;
+      }
+      var dilim = {}, son = Math.min(i + CH, users.length);
+      for(var j=i; j<son; j++) dilim[users[j]] = items[users[j]];
+      i = son;
+      api("POST", { op:"set_many", board:board, items:dilim }).then(function(d){
+        // Ara parçalarda ekranı tazeleme — henüz gönderilmemiş parçaların
+        // iyimser işaretleri geri alınmış gibi görünür. Yalnızca sonda uygula.
+        if(i >= users.length){ adopt(d); parca(); return; }
+        setSync("saving","Kaydediliyor… ("+i+"/"+users.length+")");
+        parca();
+      }).catch(function(e){
+        inflight--;
+        if(String(e.message) === "auth") return;
+        setSync("off","Kaydedilemedi: " + e.message);
+        toast("Toplu işaretleme yarıda kaldı, tekrar dene");
+      });
+    }
+    parca();
+  }
+
   function fmtTel(t){ return "0"+t.slice(0,3)+" "+t.slice(3,6)+" "+t.slice(6,8)+" "+t.slice(8); }
 
   /* Instagram kullanıcı adı yoksa sunucu "tel-5xxxxxxxxx" üretiyor; bu bir hesap
@@ -544,12 +613,18 @@
       showingEl: $(cfg.ids.showing),
       emptyText: cfg.emptyText,
       resetAsk: cfg.resetAsk,
-      birim: cfg.birim
+      birim: cfg.birim,
+      sel: {},            // toplu seçim: user -> 1
+      selN: 0
     };
     var bp = cfg.ids.bar;
     B.bars = { sale:$(bp+"bar-sale"), trial:$(bp+"bar-trial"), sent:$(bp+"bar-sent"), no:$(bp+"bar-no") };
     B.statEls = B.root.querySelectorAll(".stat");
     B.countEls = B.root.querySelectorAll("[data-c]");
+    B.selAllEl = $(cfg.ids.selall);
+    B.selAllText = $(cfg.ids.selalltext);
+    B.selActsEl = $(cfg.ids.selacts);
+    B.selCountEl = $(cfg.ids.selcount);
 
     B.all = function(){ return B.custom.length ? B.base.concat(B.custom) : B.base; };
 
@@ -622,6 +697,61 @@
       });
     };
 
+    /* ---------- toplu seçim ----------
+       Seçim yalnızca o an ekranda duran (filtre + arama sonucu) satırlar üzerinde
+       çalışır. Filtre ya da arama değişince seçim temizlenir, yanlışlıkla
+       görmediğin bir satıra işlem yapılmasın diye. */
+
+    B.selClear = function(){ B.sel = {}; B.selN = 0; };
+
+    B.selSync = function(rows){
+      var gorunen = rows || B.visible();
+      B.selCountEl.textContent = B.selN + " seçili";
+      B.selActsEl.hidden = B.selN === 0;
+      B.selAllText.textContent = gorunen.length
+        ? ("Tümünü seç (" + gorunen.length + ")")
+        : "Tümünü seç";
+      var hepsi = gorunen.length > 0 && gorunen.every(function(s){ return B.sel[s.user]; });
+      B.selAllEl.checked = hepsi;
+      B.selAllEl.indeterminate = B.selN > 0 && !hepsi;
+      B.selAllEl.disabled = gorunen.length === 0;
+    };
+
+    B.selToggle = function(user, on){
+      if(on){ if(!B.sel[user]){ B.sel[user]=1; B.selN++; } }
+      else  { if(B.sel[user]){ delete B.sel[user]; B.selN--; } }
+    };
+
+    // Secili satirlara tek seferde isaret koyar. MEVCUT ISARETLERI KORUR:
+    // "Gönderildi" basmak bir satirdaki "Deneme"yi silmez, uzerine ekler.
+    B.bulk = function(kind){
+      var gorunen = B.visible().filter(function(s){ return B.sel[s.user]; });
+      if(!gorunen.length) return;
+
+      var ad = kind==="clear" ? "işareti kaldırılacak" : ("“"+(LABEL[kind]||"Gönderildi")+"” olarak işaretlenecek");
+      if(kind==="clear" || gorunen.length > 50){
+        if(!confirm(gorunen.length + " kayıt " + ad + ". Bu herkes için geçerli olur. Devam edilsin mi?")) return;
+      }
+
+      var items = {};
+      gorunen.forEach(function(s){
+        var m = B.marksOf(s), next;
+        if(kind === "clear")      next = [];
+        else if(kind === "no")    next = ["no"];                                    // olumsuz tek basina durur
+        else next = ORDER.filter(function(v){                                        // mevcutlar + yeni, "no" duser
+          return v !== "no" && (v === kind || m.indexOf(v) !== -1);
+        });
+        var str = next.join(",");
+        items[s.user] = str || null;
+        if(str) B.status[s.user] = str; else delete B.status[s.user];               // iyimser
+      });
+
+      B.selClear();
+      B.refresh();
+      pushBulk(B.key, items);
+      toast(gorunen.length + " kayıt güncellendi");
+    };
+
     B.markButton = function(s, kind, cls){
       var b=document.createElement("button");
       b.className="btn mark "+cls; b.type="button"; b.textContent=LABEL[kind];
@@ -639,9 +769,15 @@
       rows.forEach(function(s){
         var st=B.statusOf(s), mk=B.marksOf(s);
         var li=document.createElement("li");
-        li.className="s-"+st;
+        li.className="s-"+st+(B.sel[s.user]?" picked":"");
         li.setAttribute("data-user", s.user);
         li.setAttribute("data-st", st);
+
+        var pick=document.createElement("input");
+        pick.type="checkbox"; pick.className="pick";
+        pick.checked=!!B.sel[s.user];
+        pick.setAttribute("aria-label", s.name+" seç");
+        li.appendChild(pick);
 
         var tick=document.createElement("button");
         tick.className="tick"+(st==="todo"?"":" t-"+st);
@@ -726,6 +862,8 @@
         li.appendChild(tick); li.appendChild(main); li.appendChild(acts);
         B.listEl.appendChild(li);
       });
+
+      B.selSync(rows);
     };
 
     B.refresh = function(){
@@ -748,12 +886,38 @@
       (function(b){
         b.addEventListener("click", function(){
           B.filter = (B.filter===b.getAttribute("data-f")) ? "all" : b.getAttribute("data-f");
+          B.selClear();                       // filtre değişti, seçim kalkar
           B.refresh();
         });
       })(B.statEls[k]);
     }
-    $(cfg.ids.showall).addEventListener("click", function(){ B.filter="all"; B.refresh(); });
-    B.qEl.addEventListener("input", function(){ B.query=B.qEl.value; B.render(); });
+    $(cfg.ids.showall).addEventListener("click", function(){ B.filter="all"; B.selClear(); B.refresh(); });
+    B.qEl.addEventListener("input", function(){ B.query=B.qEl.value; B.selClear(); B.render(); });
+
+    // satır seçim kutuları — tek dinleyici, binlerce satırda da hafif kalsın
+    B.listEl.addEventListener("change", function(ev){
+      var el = ev.target;
+      if(!el || el.className !== "pick") return;
+      var li = el.closest("li");
+      if(!li) return;
+      B.selToggle(li.getAttribute("data-user"), el.checked);
+      li.classList.toggle("picked", el.checked);
+      B.selSync();
+    });
+
+    B.selAllEl.addEventListener("change", function(){
+      var gorunen = B.visible(), ac = B.selAllEl.checked;
+      gorunen.forEach(function(s){ B.selToggle(s.user, ac); });
+      B.render();
+    });
+
+    B.selActsEl.addEventListener("click", function(ev){
+      var b = ev.target.closest("button[data-bulk]");
+      if(!b) return;
+      var k = b.getAttribute("data-bulk");
+      if(k === "cancel"){ B.selClear(); B.render(); return; }
+      B.bulk(k);
+    });
 
     B.tplEl.addEventListener("blur", function(){
       if(B.tplEl.value === B.tpl) return;
@@ -779,7 +943,8 @@
     emptyText:"Bu filtreye uyan salon yok.",
     resetAsk:"Salonlar sekmesindeki tüm işaretler silinecek (gönderildi, deneme, satın alım, WhatsApp yok). Bu herkes için geçerli olur. Devam edilsin mi?",
     ids:{ list:"list", empty:"empty", tpl:"tpl", q:"q", showing:"showing",
-          showall:"showall", impopen:"impopen", reset:"reset", bar:"" }
+          showall:"showall", impopen:"impopen", reset:"reset", bar:"",
+          selall:"selall", selalltext:"selalltext", selacts:"selacts", selcount:"selcount" }
   });
 
   var BWEB = makeBoard({
@@ -788,7 +953,8 @@
     emptyText:"Bu liste boş — yukarıdaki “Excel'den ekle” ile kayıt yükle.",
     resetAsk:"Website sekmesindeki tüm işaretler silinecek. Kayıtların kendisi silinmez, sadece işaretler. Bu herkes için geçerli olur. Devam edilsin mi?",
     ids:{ list:"w-list", empty:"w-empty", tpl:"w-tpl", q:"w-q", showing:"w-showing",
-          showall:"w-showall", impopen:"w-impopen", reset:"w-reset", bar:"w-" }
+          showall:"w-showall", impopen:"w-impopen", reset:"w-reset", bar:"w-",
+          selall:"w-selall", selalltext:"w-selalltext", selacts:"w-selacts", selcount:"w-selcount" }
   });
 
   var BOARDS = [BSALON, BWEB];
@@ -1273,7 +1439,7 @@
   try{ kayitliSekme = localStorage.getItem("panel_sekme") || "salons"; }catch(err){}
   showView(kayitliSekme);
   (function(){
-    var PANEL_SURUM = "v1.12.0";
+    var PANEL_SURUM = "v1.13.0";
     var say = {};
     for (var i=0;i<SALONS.length;i++){ var b=SALONS[i].ilce||"?"; say[b]=(say[b]||0)+1; }
     var siral = Object.keys(say).sort(function(a,b){ return say[b]-say[a]; });

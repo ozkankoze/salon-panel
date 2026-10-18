@@ -105,6 +105,7 @@ function normTel(v) {
 }
 
 const MAX_CUSTOM = 20000;
+const MAX_BULK = 5000;   // tek istekte toplu isaretlenebilecek kayit sayisi
 
 // Elle (Excel/CSV ile) eklenen kayitlar panel_state icinde ilgili tahtanin
 // custom alaninda durur. index.html icindeki hazir SALONS listesine hic dokunulmaz.
@@ -218,6 +219,41 @@ module.exports = async (req, res) => {
             [ID, B.status, user, value]
           );
         }
+      } else if (body.op === "set_many") {
+        // Toplu isaretleme. Istemci her kayit icin SON halini gonderir
+        // ({user: "sent,trial"} ya da silmek icin null), sunucu tek SQL ile yazar.
+        // Listedeki DIGER kayitlara dokunulmaz — sadece gelen anahtarlar degisir.
+        const items = body.items;
+        if (!items || typeof items !== "object" || Array.isArray(items)) {
+          return res.status(400).json({ error: "items" });
+        }
+        const keys = Object.keys(items).slice(0, MAX_BULK);
+        if (!keys.length) return res.status(400).json({ error: "bos" });
+
+        const koy = {};
+        const sil = [];
+        for (const k of keys) {
+          const user = String(k).slice(0, 120);
+          if (!user) continue;
+          const raw = items[k];
+          if (raw === null || raw === undefined || raw === "") {
+            sil.push(user);
+          } else {
+            const v = normStatus(raw);
+            if (!v) return res.status(400).json({ error: "value" });
+            koy[user] = v;
+          }
+        }
+        if (!sil.length && !Object.keys(koy).length) return res.status(400).json({ error: "bos" });
+
+        await c.query(
+          `update panel_state
+           set data = jsonb_set(data, array[$2]::text[],
+                 (coalesce(data->$2,'{}'::jsonb) - $3::text[]) || $4::jsonb, true),
+               updated_at = now()
+           where id = $1`,
+          [ID, B.status, sil, JSON.stringify(koy)]
+        );
       } else if (body.op === "tpl") {
         await c.query(
           `update panel_state

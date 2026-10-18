@@ -129,6 +129,31 @@ iki listeyi birlikte sayar, çünkü WhatsApp limiti listeye göre değil numara
 
 ---
 
+## Toplu işaretleme
+
+Her satırın solunda bir seçim kutusu var. Arama çubuğunun sağındaki
+**Tümünü seç** o an ekranda duran (filtre + arama sonucu) kayıtların hepsini
+seçer — etikette kaç tane olduğu yazar, örn. `Tümünü seç (1554)`.
+
+Tipik kullanım: üstteki **Bekleyen** kutusuna bas → **Tümünü seç** → **Gönderildi**.
+
+- Bir şey seçilir seçilmez araç çubuğunda işlem düğmeleri açılır:
+  Gönderildi · Deneme · Satın alım · WhatsApp yok · İşareti kaldır · Vazgeç.
+- **Mevcut işaretler korunur.** Toplu "Satın alım" basmak o satırdaki "Deneme"yi
+  silmez, üstüne ekler. Tek istisna yine "WhatsApp yok": o diğerlerini temizler.
+- **İşareti kaldır** seçilenlerin bütün işaretlerini siler ve her zaman onay sorar.
+  50'den fazla kaydı etkileyen diğer işlemler de onay sorar.
+- Filtre ya da arama değişince seçim temizlenir — görmediğin bir satıra işlem
+  yapılmasın diye kasıtlı.
+- Seçim yalnızca tarayıcıda durur; sunucuya yalnızca bastığın işlem gider.
+
+Sunucu tarafında bu `set_many` işlemidir: istemci her kaydın **son halini**
+gönderir, sunucu tek bir SQL cümlesiyle yazar. 1500 kayıt tek istekte gider
+(gerisi parçalara bölünür), yani binlerce satır saniyeler içinde işaretlenir.
+Gönderilmeyen anahtarlara dokunulmaz.
+
+---
+
 ## Mesaj Kaydı sekmesi
 
 Üstteki **Mesaj Kaydı** sekmesi, hangi numaradan hangi gün kaç mesaj attığını
