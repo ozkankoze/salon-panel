@@ -114,12 +114,18 @@
   @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .selacts .cnt{color:var(--accent)}}
   :root[data-theme="dark"] .selacts .cnt{color:var(--accent)}
 
-  ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  /* Liste "pencereli" çiziliyor: 20 binlerce kayıtta bile DOM'da yalnızca
+     ekrandaki satırlar durur, geri kalanın yerini üstte/altta birer boşluk
+     tutar. Bu yüzden flex+gap yerine blok düzen ve margin kullanılıyor —
+     boşluk tutucuların yüksekliği böyle birebir hesaplanabiliyor. */
+  ul{list-style:none;margin:0;padding:0;display:block}
   li{
     display:grid;grid-template-columns:20px 26px minmax(0,1fr) auto;align-items:center;gap:14px;
     background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+    margin:0 0 8px;
     transition:opacity .2s ease, border-color .2s ease, background .2s ease;
   }
+  li.vspacer{display:block;margin:0;padding:0;border:0;background:none;border-radius:0;transition:none}
   li.picked{outline:2px solid var(--accent);outline-offset:-1px;opacity:1}
   input.pick{width:16px;height:16px;margin:0;accent-color:var(--accent);cursor:pointer;flex:none}
   li.s-sent{opacity:.55}
@@ -685,9 +691,16 @@
       return c;
     };
 
+    /* Filtre + arama sonucu. Sonuç önbelleğe alınır: tek bir tıklamada
+       render/selSync/bulk üçü birden bu listeyi istiyordu ve 20 bin kayıtta
+       aynı iş üç kez yapılıyordu. Durum, filtre ya da arama değişince
+       B.rowsCache null'lanır. */
+    B.rowsCache = null;
+
     B.visible = function(){
+      if(B.rowsCache) return B.rowsCache;
       var q=B.query.trim().toLowerCase();
-      return B.all().filter(function(s){
+      B.rowsCache = B.all().filter(function(s){
         if(B.filter!=="all"){
           if(B.filter==="todo"){ if(B.marksOf(s).length) return false; }
           else if(!B.has(s, B.filter)) return false;
@@ -695,7 +708,10 @@
         if(!q) return true;
         return (s.name+" "+s.user+" "+s.tel+" "+(s.ilce||"")+" "+(s.site||"")).toLowerCase().indexOf(q)!==-1;
       });
+      return B.rowsCache;
     };
+
+    B.bozul = function(){ B.rowsCache = null; };   // önbelleği düşür
 
     /* ---------- toplu seçim ----------
        Seçim yalnızca o an ekranda duran (filtre + arama sonucu) satırlar üzerinde
@@ -760,13 +776,14 @@
       return b;
     };
 
-    B.render = function(){
-      var rows=B.visible();
-      B.listEl.innerHTML="";
-      B.emptyEl.hidden = rows.length>0;
-      B.showingEl.textContent = B.all().length ? (rows.length+" / "+B.all().length+" "+B.birim) : "";
+    /* ---------- pencereli çizim ----------
+       20.000 kayıtta bütün satırları DOM'a basmak sekme başına ~440.000 düğüm
+       ve ~2 GB bellek demekti; tek bir tıklama 2 saniye donduruyordu. Artık
+       yalnızca ekrandaki satırlar (+ üstte ve altta birer tampon) çiziliyor,
+       geri kalanın yerini iki boşluk tutucu dolduruyor. Kayıtların hiçbiri
+       silinmez — sadece görünmeyenler DOM'a konmaz. */
 
-      rows.forEach(function(s){
+    B.satirYap = function(s){
         var st=B.statusOf(s), mk=B.marksOf(s);
         var li=document.createElement("li");
         li.className="s-"+st+(B.sel[s.user]?" picked":"");
@@ -860,13 +877,86 @@
         }
 
         li.appendChild(tick); li.appendChild(main); li.appendChild(acts);
-        B.listEl.appendChild(li);
-      });
+        return li;
+    };
 
+    var TAMPON = 8;          // ekranın üstünde ve altında fazladan çizilen satır
+    var VARSAYILAN_H = 69;   // ilk çizimde ölçüm yokken kullanılan satır yüksekliği
+
+    // Satır yüksekliği + aradaki boşluk. Bir kez ölçülür, ekran boyu
+    // değişince yeniden ölçülür (dar ekranda satırlar sarıp uzuyor).
+    B.adim = function(){
+      if(B.adimDeger && B.adimEn === window.innerWidth) return B.adimDeger;
+      var ornek = B.listEl.querySelector("li:not(.vspacer)");
+      if(ornek){
+        var h = ornek.getBoundingClientRect().height;
+        if(h > 0){ B.adimDeger = h + 8; B.adimEn = window.innerWidth; return B.adimDeger; }
+      }
+      return B.adimDeger || VARSAYILAN_H;
+    };
+
+    // Yalnızca pencereyi yeniden çizer — sayaçları ve filtreleri hesaplamaz.
+    B.paint = function(){
+      var rows = B.visible(), adim = B.adim(), n = rows.length;
+
+      var ustSayfa = B.listEl.getBoundingClientRect().top + window.pageYOffset;
+      var gorunenUst = window.pageYOffset - ustSayfa;
+      var ilk = Math.max(0, Math.floor(gorunenUst / adim) - TAMPON);
+      var adet = Math.ceil(window.innerHeight / adim) + TAMPON * 2;
+      var sonr = Math.min(n, ilk + adet);
+      if(ilk > n) ilk = Math.max(0, n - adet);
+
+      B.pencere = { ilk: ilk, son: sonr, adim: adim, n: n };
+
+      var parca = document.createDocumentFragment();
+      var ust = document.createElement("li");
+      ust.className = "vspacer"; ust.style.height = (ilk * adim) + "px";
+      parca.appendChild(ust);
+      for(var i = ilk; i < sonr; i++) parca.appendChild(B.satirYap(rows[i]));
+      var alt = document.createElement("li");
+      alt.className = "vspacer"; alt.style.height = Math.max(0, (n - sonr) * adim) + "px";
+      parca.appendChild(alt);
+
+      B.listEl.innerHTML = "";
+      B.listEl.appendChild(parca);
+
+      // Ölçüm ilk gerçek satırdan sonra netleşir; değiştiyse bir kez düzelt.
+      if(sonr > ilk){
+        var yeni = B.adim();
+        if(Math.abs(yeni - adim) > 1 && !B.olcumTekrar){
+          B.olcumTekrar = true;
+          B.paint();
+          B.olcumTekrar = false;
+          return;
+        }
+      }
       B.selSync(rows);
     };
 
+    // Kaydırırken pencere kaydıysa yeniden çiz. Kare başına en fazla bir kez.
+    B.kaydirmaIzle = function(){
+      if(B.kaydirmaBekliyor) return;
+      B.kaydirmaBekliyor = true;
+      requestAnimationFrame(function(){
+        B.kaydirmaBekliyor = false;
+        if(B.root.hidden) return;                       // bu sekme kapalıysa boşuna çizme
+        var p = B.pencere;
+        if(!p) return B.paint();
+        var ustSayfa = B.listEl.getBoundingClientRect().top + window.pageYOffset;
+        var ilk = Math.max(0, Math.floor((window.pageYOffset - ustSayfa) / p.adim) - TAMPON);
+        if(ilk !== p.ilk) B.paint();
+      });
+    };
+
+    B.render = function(){
+      var rows = B.visible();
+      B.emptyEl.hidden = rows.length > 0;
+      B.showingEl.textContent = B.all().length ? (rows.length+" / "+B.all().length+" "+B.birim) : "";
+      B.paint();
+    };
+
     B.refresh = function(){
+      B.bozul();                                 // veri değişti, filtre sonucunu yeniden hesapla
       var c=B.counts(), total=B.all().length || 1;
       for(var i=0;i<B.countEls.length;i++) B.countEls[i].textContent=c[B.countEls[i].getAttribute("data-c")];
       // Bir kayıt birden çok işaret taşıyabildiği için toplam %100'ü aşabilir; bara sığdır.
@@ -892,7 +982,26 @@
       })(B.statEls[k]);
     }
     $(cfg.ids.showall).addEventListener("click", function(){ B.filter="all"; B.selClear(); B.refresh(); });
-    B.qEl.addEventListener("input", function(){ B.query=B.qEl.value; B.selClear(); B.render(); });
+
+    /* Arama: her tuş vuruşunda 20 bin kaydı süzüp listeyi yeniden çizmek
+       harf başına yarım saniye sürüyordu. Artık yazma durunca tek sefer çizer. */
+    var aramaZaman;
+    B.qEl.addEventListener("input", function(){
+      clearTimeout(aramaZaman);
+      aramaZaman = setTimeout(function(){
+        B.query = B.qEl.value;
+        B.selClear();
+        B.bozul();
+        B.render();
+      }, 160);
+    });
+
+    // Kaydırma ve ekran boyu: pencereyi takip et
+    window.addEventListener("scroll", B.kaydirmaIzle, { passive:true });
+    window.addEventListener("resize", function(){
+      B.adimDeger = null;
+      if(!B.root.hidden) B.paint();
+    });
 
     // satır seçim kutuları — tek dinleyici, binlerce satırda da hafif kalsın
     B.listEl.addEventListener("change", function(ev){
@@ -1126,6 +1235,9 @@
     for(var i=0;i<tb.length;i++) tb[i].setAttribute("aria-selected", String(tb[i].getAttribute("data-v")===v));
     try{ localStorage.setItem("panel_sekme", v); }catch(err){}
     if(v==="log" && !$("lg-tel").value) $("lg-tel").focus();
+    // Sekme gizliyken kaydırma dinlenmiyor; açılınca pencereyi tazele.
+    if(v==="salons") BSALON.paint();
+    if(v==="web") BWEB.paint();
   }
   var tabs=document.querySelectorAll(".tab");
   for(var t=0;t<tabs.length;t++){
@@ -1439,7 +1551,7 @@
   try{ kayitliSekme = localStorage.getItem("panel_sekme") || "salons"; }catch(err){}
   showView(kayitliSekme);
   (function(){
-    var PANEL_SURUM = "v1.13.0";
+    var PANEL_SURUM = "v1.14.0";
     var say = {};
     for (var i=0;i<SALONS.length;i++){ var b=SALONS[i].ilce||"?"; say[b]=(say[b]||0)+1; }
     var siral = Object.keys(say).sort(function(a,b){ return say[b]-say[a]; });
